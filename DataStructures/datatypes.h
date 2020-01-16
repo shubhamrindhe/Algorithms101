@@ -1,0 +1,4 @@
+enum datatypes {
+	INT,
+	CHAR
+};
