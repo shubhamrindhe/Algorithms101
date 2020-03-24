@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+	<meta name="author" content="shubhamrindhe" id="author"/>
+	<title>PythagorasTree</title>
+	<style>
+	*,body{
+		padding: 0;
+		margin: 0;
+	}
+	#canvas{
+		z-index: -10;
+	}
+	.wrapper{
+		width: 250px;
+		position: absolute;
+		top:10px;
+		left: 50%;
+		transform: translate(-50%,0);
+	}
+	
+	
+	div{
+		position:absolute;
+		width:33%;
+		overflow:visible;
+	}
+	.center{
+		left:50%;
+		transform:translate(-50%,0);
+	}
+	
+	#random{
+		position:absolute ;
+		left:10px;
+		top:10px;
+		padding:10px;
+		background-color:rgba(0,0,0,0.3);
+		color:#fff;
+		cursor:grab;
+	}
+	#random:hover{
+		background:rgba(0,0,0,0.8);
+		color:#fff;	
+		border-radius:5px;
+	}
+	#go{
+		position:absolute ;
+		right:10px;
+		top:10px;
+		padding:10px;
+		background-color:rgba(0,0,0,0.3);
+		color:#fff;
+		cursor:grab;
+	}
+	#go:hover{
+		background:rgba(0,0,0,0.8);
+		color:#fff;	
+		border-radius:5px;
+	}
+	
+	#displayAngle{
+		position: relative;
+		width: 100%;
+		text-align: center;
+		/*background: #ccc;*/
+	}
+
+	input.slider[type=range]{
+		-webkit-apperance:none;
+		width: 100%;
+	}
+	input.slider[type=range]::-moz-range-track{
+		width: 100%;
+		height: 10px;
+		background: #212121;
+		border-radius: 5px  ;
+	}
+	input.slider[type=range]::-moz-range-thumb{
+		width: 10px;
+		height: 10px;
+		background: white;
+		border-radius: 50%;
+		border: 1px solid black;
+		position: relative;
+		display: inline-block;
+		transition: all 0.2s ease-in-out;
+		cursor:grab;
+	}
+	input.slider[type=range]::-moz-range-thumb:hover{
+		width: 22px;
+		height: 22px;
+	}
+	input.slider[type=range]::-moz-range-thumb:active{
+		width: 20px;
+		height: 20px;
+		background: #00bcd4;
+	}
+	</style>
+
+	
+</head>
+	<body>
+		<div class="center">	
+			<span id="displayAngle" class="center">45</span>
+			<input id="angle" class="slider" type="range" value="45" min="15" max="75" step="1" />
+		</div>	
+		
+		<span id="random" onclick="random_Tree()">random</span>
+		<span onclick="_Tree()" id="go">go</span>
+		
+	
+		<canvas id="canvas"></canvas>
+	</body>
+	
+	<script type="text/javascript">
+
+	var canvas,ctx;
+	var height = innerWidth < innerHeight ? 50 : 80;
+	var min = 10;
+	var randomTree = true;
+
+	window.onload = function(){
+		initCanvas();
+
+		pytree();
+	}
+	angle.onmousemove = function(e){
+		if(!randomTree)
+			pytree();
+		document.getElementById('displayAngle').innerHTML = document.getElementById('angle').value;
+		
+	}
+	//window.addEventListener("resize", pyTree, false);
+	/*["resize", "click", "touchdown"].forEach(event => {
+		document.addEventListener(event, pyTree(innerWidth/2,innerHeight,height), false);
+	});*/
+	function _Tree(){
+		randomTree = false;
+		pytree();
+	}
+	function random_Tree(){
+		randomTree = true;
+		pytree();
+	}
+	
+	function pytree(){
+		Tree(innerWidth/2,innerHeight-100,height);
+	}
+	function initCanvas(){
+		canvas = document.getElementById('canvas');
+		ctx = canvas.getContext('2d');
+		canvas.style.position = 'absolute';
+		canvas.style.left = '50%';
+		canvas.style.top = '50%';
+		canvas.style.transform = 'translate(-50%,-50%)';
+		canvas.style.backgroundColor = 'lightblue';
+		canvas.width = innerWidth;
+		canvas.height = innerHeight;
+	}
+	
+	function Tree(x,y,length){
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+	
+		ctx.save();
+		ctx.translate(x-length*0.5,y);
+		branch(length,randomTree ? random(15,75) : document.getElementById('angle').value);
+		ctx.restore();
+	}
+	function branch(length,angle){		
+		if(length<5){ 
+			ctx.fillStyle ='green' ;
+			ctx.fillRect(0,0,length,length);
+			ctx.fillStyle ='black';
+			return;
+		}else{
+			ctx.fillRect(0,0,length,length);
+			
+			var adj = length*Math.cos(angle* Math.PI / 180);
+			var opp = length*Math.sin(angle* Math.PI / 180);
+			
+			ctx.save();
+			ctx.translate(length,0);
+			ctx.rotate(angle*Math.PI/180);
+			ctx.translate(-adj,-adj);
+			branch(adj, randomTree ? random(15,75) : document.getElementById('angle').value );
+			ctx.restore();
+				
+			ctx.save();
+			ctx.rotate((angle-90)*Math.PI/180);
+			ctx.translate(0,-opp);
+			branch(opp, randomTree ? random(15,75) : document.getElementById('angle').value );
+			ctx.restore();
+		}
+	}
+	function random(a,b){
+		return a + (b-a)*Math.random();
+	}	
+	</script>
+</html>

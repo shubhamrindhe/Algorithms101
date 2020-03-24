@@ -9,5 +9,7 @@ struct Stack {
 }
 
 struct Stack* creat_stack(){
+	struct Stack* satck = (struct Satck*) malloc(sizeof(struct Stack));
+	satck->top = -1;
 	
 }

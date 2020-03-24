@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+	<meta name="author" content="shubhamrindhe" id="author"/>
+	<title>FractalTree</title>
+	<style>
+	*,body{
+		padding: 0;
+		margin: 0;
+	}
+	#canvas{
+		z-index: -10;
+	}
+	
+	div{
+		position:absolute;
+		width:33%;
+	}
+	.left{
+		left:0;
+	}
+	.center{
+		left:50%;
+		transform:translate(-50%,0);
+	}
+	.right{
+		right:0;
+	}
+	span{
+		position:relative;
+		text-align:center;
+		width:100%;
+	}
+	
+	#displayAngle{
+		position: relative;
+		width: 100%;
+		text-align: center;
+		/*background: #ccc;*/
+	}
+
+	input.slider[type=range]{
+		-webkit-apperance:none;
+		width:100%;
+	}
+	input.slider[type=range]::-moz-range-track{
+		width: 100%;
+		height: 10px;
+		background: #212121;
+		border-radius: 5px  ;
+	}
+	input.slider[type=range]::-moz-range-thumb{
+		width: 10px;
+		height: 10px;
+		background: white;
+		border-radius: 50%;
+		border: 1px solid black;
+		position: relative;
+		display: inline-block;
+		transition: all 0.2s ease-in-out;
+		cursor:grab;
+	}
+	input.slider[type=range]::-moz-range-thumb:hover{
+		width: 22px;
+		height: 22px;
+	}
+	input.slider[type=range]::-moz-range-thumb:active{
+		width: 20px;
+		height: 20px;
+		background: #00bcd4;
+	}
+	</style>
+
+	
+</head>
+	<body>
+		<div class="left">	
+			<span id="displayLF" class="center"></span>
+			<input id="leftFract" class="slider" type="range" value="0.67" min="0" max="0.8" step="0.01" />
+			<span class="center">LeftFract</span>
+		</div>	
+		<div class="center">	
+			<span id="displayAngle" class="center"></span>
+			<input id="angle" class="slider" type="range" value="45" min="0" max="360" />
+			<span class="center">Angle</span>
+		</div>	
+		<div class="right">	
+			<span id="displayRF" class="center"></span>
+			<input id="rightFract" class="slider" type="range" value="0.67" min="0" max="0.8" step="0.01" />
+			<span class="center">RightFract</span>
+		</div>
+		
+		<canvas id="canvas"></canvas>
+		
+	</body>
+	
+	<script type="text/javascript">
+
+	var canvas,ctx;
+	var phase;
+	var height = innerWidth < innerHeight ? 100 : 150;
+	var angle = document.getElementById('angle');
+	var leftFract = document.getElementById('leftFract');
+	var rightFract = document.getElementById('rightFract');
+	var min = 5;
+
+	window.onload = function(){
+		initCanvas();
+
+		renderTree(innerWidth/2,innerHeight,height);
+	}
+	angle.onmousemove = function(e){
+		renderTree(innerWidth/2,innerHeight,height);
+	}
+	leftFract.onmousemove = function(e){
+		renderTree(innerWidth/2,innerHeight,height);
+	}
+	rightFract.onmousemove = function(e){
+		renderTree(innerWidth/2,innerHeight,height);
+	}
+
+	function initCanvas(){
+		canvas = document.getElementById('canvas');
+		ctx = canvas.getContext('2d');
+		canvas.style.position = 'absolute';
+		canvas.style.left = '50%';
+		canvas.style.top = '50%';
+		canvas.style.transform = 'translate(-50%,-50%)';
+		canvas.style.backgroundColor = 'lightblue';
+		canvas.width = innerWidth;
+		canvas.height = innerHeight;
+	}
+	function initTree(){
+		phase = (angle.value)*Math.PI/180;
+		document.getElementById('displayAngle').innerHTML = angle.value;
+		document.getElementById('displayLF').innerHTML = leftFract.value;
+		document.getElementById('displayRF').innerHTML = rightFract.value;
+	}
+	function renderTree(x,y,length){
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+		initTree();
+
+		ctx.save();
+		ctx.translate(x,y);
+		ctx.beginPath();
+		ctx.strokeStyle = 'black';
+		ctx.lineWidth = 2;
+		renderBranch(length);
+		ctx.closePath();
+		ctx.stroke();
+		ctx.restore();
+	}
+	function renderBranch(length){
+		ctx.moveTo(0,0);
+		ctx.lineTo(0,-length);
+		ctx.translate(0,-length);
+		
+		if(length>min){
+			ctx.save();
+			ctx.rotate(phase);
+			renderBranch(length*document.getElementById('rightFract').value);
+			ctx.restore();
+			ctx.save();
+			ctx.rotate(-phase);
+			renderBranch(length*document.getElementById('leftFract').value);
+			ctx.restore();
+		}
+	}
+	function random(a,b){
+		return a + (b-a)*Math.random();
+	}
+
+	</script>
+	
+	
+</html>

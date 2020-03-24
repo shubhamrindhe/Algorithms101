@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include "../datatype_kind.h"
+#include "../../DataStructures/datatypes.h"
 
 int main(){
 	
