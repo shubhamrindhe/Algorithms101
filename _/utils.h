@@ -5,4 +5,4 @@ double map(double x,double s1,double so1,double s2,double so2){
 
 void swap(void *x,void *y){
 	
-}
+}
