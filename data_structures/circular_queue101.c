@@ -78,13 +78,12 @@ int main () {
 	char ch;
 	while ( 1 ) {
 		print_queue(q);
-		char c;
-		
 		printf("Enter Choice : ");
-		scanf("%c",&c);
-		switch (c) {
+		scanf("%c",&ch);
+		switch (ch) {
 			case 'e':
 				printf("Enter Char : ");
+				int c;
 				scanf("%d",&c);
 				enqueue(q,c);
 				break;
