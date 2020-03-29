@@ -67,6 +67,23 @@ int is(struct Trie* root, char* string) {
 	return node->leaf;
 }
 
+struct Trie* get_node (struct Trie* root, char* string) {
+	struct Trie* crawler = root;
+	while (*string) {
+		if ( crawler ) {
+			int idx = char_idx(*string);
+			printf("\t %d %c ",idx,*string);
+			crawler = crawler->links[idx];
+		} else {
+			printf(" breaking loop ");
+			return NULL;
+		}
+		++string;
+	}
+	printf(" \n ");
+	return crawler;
+}
+
 int main () {
 	
 	struct Trie* root = new_trie();
