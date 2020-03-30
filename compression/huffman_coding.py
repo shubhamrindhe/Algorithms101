@@ -1,5 +1,10 @@
 import json
 
+def savior(fname,data):
+	file = open(fname, 'w')
+	json.dump(data, file,default=lambda o: o.__dict__, indent = 2)
+	file.close()
+
 def frequency_table(string):
 	freq_table = {}
 	for character in string:
@@ -44,29 +49,74 @@ def tree_crawler(root, code = ''):
 		return 
 	tree_crawler(root['0'], code+'0')
 	tree_crawler(root['1'], code+'1')
-	print(codes)
-	
-	
+
 def huffman_code_map(string):
 	code_dict = {}
 	tree = huffman_tree(string);
-	print("\n\n\n themap \n",tree_crawler(tree))
+	savior('tree.json',tree)
+	tree_crawler(tree)
+	return codes
 	
+def encode(string):
+	codes = huffman_code_map(string)
+	key_codes = {}
+	for code in codes:
+		key_codes[codes[code]] = code
+	encoded_string = ""
+	for character in string:
+		encoded_string += key_codes[character]
+	print("\n\n\n\n\n", encoded_string, len(encoded_string) / 8)
+	return encoded_string
 	
+def decode(data, codes):
+	code = ""
+	decoded_string = ""
+	for bit in data:
+		code += bit
+		if code in codes:
+			decoded_string += codes[code]
+			code = ""
+	print(decoded_string, len(decoded_string)*8)
+	return decoded_string
+
+def write_binary(coded_data):
+	extra_bit_count = 8 - len(coded_data) % 8
+	extra_code = ''
+	for i in range(extra_bit_count):
+		extra_code += '0'
+	coded_data += extra_code
+	coded_data += "{0:08b}".format(extra_bit_count)
+	print(coded_data)
+	#file = open('com.xhu','bw')
 	
 
-string = "huffman"
+#string = "abcdefghijklmnopqrstuvwxyz"
+string = "aaaabbbccd"
 print(string,frequency_table(string))
-print(new_node(12,"xhu",{ '0' : 0 }, { '1' : 1}))
-print({ key : key for key in ['a' , 'b']})
 
 print(" tree ",huffman_tree(string))
 
-print(merge_nodes(new_node(1,'a',0,1),new_node(2,'b',0,1)))
-
 huffman_code_map(string);
+savior('codes.json',codes)
+encoded_string = encode(string)
+print("\n\n\n",len(decode(encoded_string,codes)) / (len(string)*8) * 100, "% Compression")
+
+print("\n\n\n")
+write_binary("1111")
+
 
 '''
+mnist = open('mnist_train.json')
+codes = {}
+print(" \n\n\n\n\n\n ",huffman_code_map(mnist.read()))
+print("\n\n\n",len(decode(encode(mnist.read()),codes)) / (len(string)*8) * 100, "% Compression")
+savior('codes.json',codes)
+'''
+
+'''
+print(merge_nodes(new_node(1,'a',0,1),new_node(2,'b',0,1)))
+
+
 a = [0,1,2,3,4,5]
 print(a)
 print(a.pop(0))
