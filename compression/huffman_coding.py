@@ -65,7 +65,7 @@ def encode(string):
 	encoded_string = ""
 	for character in string:
 		encoded_string += key_codes[character]
-	print("\n\n\n\n\n", encoded_string, len(encoded_string) / 8)
+	print("\n\n\n\n\n", len(encoded_string) / 8)
 	return encoded_string
 	
 def decode(data, codes):
@@ -76,23 +76,49 @@ def decode(data, codes):
 		if code in codes:
 			decoded_string += codes[code]
 			code = ""
-	print(decoded_string, len(decoded_string)*8)
+	print(len(decoded_string)*8)
 	return decoded_string
 
-def write_binary(coded_data):
+def compress(filename, coded_data):
 	extra_bit_count = 8 - len(coded_data) % 8
 	extra_code = ''
 	for i in range(extra_bit_count):
 		extra_code += '0'
 	coded_data += extra_code
 	coded_data += "{0:08b}".format(extra_bit_count)
-	print(coded_data)
-	#file = open('com.xhu','bw')
+	b = bytearray()
+	for i in range(0, len(coded_data), 8):
+		byte = coded_data[i:i+8]
+		b.append(int(byte, 2))
+	with open(filename, 'wb') as o_file:
+		o_file.write(bytes(b))
+
+def remove_extra_bits(bit_string):
+	extra_bit_count_byte = bit_string[-8:]
+	extra_bit_count = int(extra_bit_count_byte,2)
+	return bit_string[:-1*(8+extra_bit_count)]
 	
+		
+def extract(filename, outputfilename):
+	with open(filename, 'rb') as b_file, open(outputfilename, 'w') as o_file:
+		bit_string = ''
+		byte = b_file.read(1)
+		while byte != b'':
+			byte_ord = ord(byte)
+			bits = bin(byte_ord)[2:].rjust(8,'0')
+			bit_string += bits
+			byte = b_file.read(1)
+		o_text = decode(remove_extra_bits(bit_string), codes)
+		o_file.write(o_text)
+		
 
 #string = "abcdefghijklmnopqrstuvwxyz"
-string = "aaaabbbccd"
-print(string,frequency_table(string))
+
+f = open('mnist_test.json', 'r')
+
+string = f.read()#"aaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccd"
+#string = "aaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccd"
+print(frequency_table(string))
 
 print(" tree ",huffman_tree(string))
 
@@ -102,15 +128,16 @@ encoded_string = encode(string)
 print("\n\n\n",len(decode(encoded_string,codes)) / (len(string)*8) * 100, "% Compression")
 
 print("\n\n\n")
-write_binary("1111")
+compress('o.xhu', encoded_string)
+extract('o.xhu','otext.txt')
 
 
 '''
 mnist = open('mnist_train.json')
 codes = {}
-print(" \n\n\n\n\n\n ",huffman_code_map(mnist.read()))
-print("\n\n\n",len(decode(encode(mnist.read()),codes)) / (len(string)*8) * 100, "% Compression")
-savior('codes.json',codes)
+print(" \n\n\n\n\n\n ",frequency_table(mnist.read()))
+#print("\n\n\n",len(decode(encode(mnist.read()),codes)) / (len(string)*8) * 100, "% Compression")
+savior('mnist_freq.json',frequency_table(mnist.read()))
 '''
 
 '''
