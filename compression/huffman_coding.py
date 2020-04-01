@@ -112,12 +112,12 @@ def extract(filename, outputfilename):
 		o_file.write(o_text)
 		
 
-#string = "abcdefghijklmnopqrstuvwxyz"
+string = "abcdefghijklmnopqrstuvwxyz"
 
 f = open('mnist_test.json', 'r')
 
-string = f.read()#"aaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccd"
-#string = "aaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccd"
+#string = f.read()#"aaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccd"
+#string = "aaaabbbccd aaaabbbccd aaaabbbccd aaaabbbccd aaaabbbccd aaaabbbccd"
 print(frequency_table(string))
 
 print(" tree ",huffman_tree(string))
@@ -125,10 +125,15 @@ print(" tree ",huffman_tree(string))
 huffman_code_map(string);
 savior('codes.json',codes)
 encoded_string = encode(string)
-print("\n\n\n",len(decode(encoded_string,codes)) / (len(string)*8) * 100, "% Compression")
+
+print("\n\n\n", encoded_string, len(encoded_string),"% e\n\n\n")
+print("\n\n\n",len(encoded_string) / (len(string)*8) * 100, "% Compression")
 
 print("\n\n\n")
 compress('o.xhu', encoded_string)
+
+decoded_string = decode(encoded_string, codes)
+print("\n\n\n", decoded_string, "% d\n\n\n\n")
 extract('o.xhu','otext.txt')
 
 
