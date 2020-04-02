@@ -71,10 +71,12 @@ class Huffman_Codec:
 		return self.codes
 	
 	def generate_keys(self):
-		self.keys = {}
+		self.keys = { code: key for key, code in self.codes.items() }
+		'''
 		for key, code in self.codes.items():
 			self.keys[code] = key
 		print(self.keys)
+		'''
 		
 	def encode(self, string):
 		encoded_string = ""
@@ -107,12 +109,55 @@ class Huffman_Codec:
 		with open(b_filename, 'wb') as o_file:
 			o_file.write(bytes(b))
 		
+	def compress_file(self, i_filename, b_filename):
+		with open(i_filename, 'r') as i_file, open(b_filename, 'wb') as b_file:
+			code = ''
+			bytes = bytearray()
+			character = i_file.read(1)
+			while True:
+				code += self.codes[character]
+				while len(code) >= 8:
+					bytes.append(int(code[:8], 2))
+					code = code[8:]
+					b_file.write(bytes)
+					bytes = bytearray()
+				character = i_file.read(1)
+				if character == '':
+					# we are in the endgame now.
+					extra_code_len = 8 - len(code) % 8
+					extra_code = ''
+					for i in range(extra_code_len):
+						extra_code += '0'
+					code += extra_code + '{0:08b}'.format(extra_code_len)
+					bytes = bytearray()
+					for i in range(0, len(code), 8):
+						byte = code[i:i+8]
+						bytes.append(int(byte, 2))
+					b_file.write(bytes)
+					print("\n\n\n\n\n extra_code_len : ", extra_code_len)
+					break
+			b_file.close()
+			
 	@staticmethod
 	def remove_extra_bits(encoded_string):
 		extra_bit_count_byte = encoded_string[-8:]
 		extra_bit_count = int(extra_bit_count_byte,2)
 		return encoded_string[:-1*(8+extra_bit_count)]
 			
+	
+		
+	def analyse_codes(self):
+		codes_list = []
+		max_code = 0
+		for key, code in self.codes.items():
+			if len(code) > max_code:
+				max_code = len(code)
+			#codes_list.append({ key: key, code: code, code_len: len(code)})
+		#codes_list = sort(codes_list, key = lambda i:len(i['code_len']))
+		print(self.codes)
+		print('maxcode : ', max_code)
+		return max_code
+	
 	def extract(self, filename, outputfilename):
 		with open(filename, 'rb') as b_file, open(outputfilename, 'w') as o_file:
 			bit_string = ''
@@ -124,11 +169,48 @@ class Huffman_Codec:
 				byte = b_file.read(1)
 			o_text = self.decode(Huffman_Codec.remove_extra_bits(bit_string))
 			o_file.write(o_text)
+	
+	def extract_file(self, b_filename, o_filename):
+		with open(b_filename, 'rb') as b_file, open(o_filename, 'w') as o_file:
+			max_code = self.analyse_codes()
+			bq = []
+			Bq = [b_file.read(1) for i in range(2)]
+			code = ''
+			while Bq:
+				if code in self.keys:
+					o_file.write(self.keys[code])
+					code = ''
+				if len(bq) < max_code:
+					next_byte = b_file.read(1)
+					if next_byte != b'':
+						Bq.append(next_byte)
+						byte = Bq.pop(0)
+						byte_ord = ord(byte)
+						bits = bin(byte_ord)[2:].rjust(8,'0')
+						for bit in bits:
+							bq.append(bit)
+					else:
+						# we are in the endgame now.
+						while bq:
+							code += bq.pop(0)
+						final_bytes = []
+						while Bq:
+							final_bytes.append(Bq.pop(0))
+						for byte in final_bytes:
+							byte_ord = ord(byte)
+							bits = bin(byte_ord)[2:].rjust(8,'0')
+							code += bits
+						o_file.write(self.decode(Huffman_Codec.remove_extra_bits(code)))
+						o_file.close()
+						break
+				code += bq.pop(0)
+			print("\n\n\t mission accomplished!")
+		return
 		
 
 codec = Huffman_Codec()
 
-f = open('huffman_coding.py', 'r')
+f = open('otext.txt', 'r')
 
 #string = "abcdefghijklmnopqrstuvwxyz"
 string = f.read()
@@ -142,9 +224,15 @@ e = codec.encode(string)
 print(e)
 print(codec.decode(e))
 
+codec.compress_file('otext.txt', 'test.bin')
+codec.analyse_codes()
+codec.extract_file('test.bin', 'test.py')
+
+
+'''
 codec.compress(e, 'test.bin')
 codec.extract('test.bin', 'test.py')
-
+'''
 
 #print(codec.analyse_file('otext.txt'),Huffman_Codec.new_node())
 
