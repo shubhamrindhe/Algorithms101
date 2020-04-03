@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+	<meta name="author" content="shubhamrindhe" id="author"/>
+    <title>Fourier</title>
+    <style>
+        body{
+			padding:0;
+			margin:0;
+			font-family:Courier New;
+			
+			display:flex;
+			justify-content:center;
+			align-items:center;
+			height:100vh;
+			
+			/*background:#000;*/
+		}
+		.centroid{
+			position:absolute;
+			left:50%;
+			top:50%;
+			transform:translate(-50%,-50%);
+		}
+		
+		#canvas{
+			/*width:100%;
+			height:100%;
+			*/
+			/*background:#000;*/
+		}
+    </style>
+
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+</body>
+    <script type="text/javascript">
+	var canvas =  document.getElementById('canvas');
+	canvas.width = innerWidth;
+	canvas.height = innerHeight;
+	
+	var ctx = canvas.getContext('2d');
+	
+	
+	var drawing = [];
+	var time =0;
+	
+	var wave = []; 
+	var path =[];
+	
+	var loopSpeed = 1;
+	
+	var signalX=[];
+	var signalY=[];
+	var fourierX ;
+	var fourierY ;
+	
+	var state = "";
+	var mouse = {x:undefined,y:undefined};
+	
+	onmousedown = function(e){
+		drawing = [];
+		path = [];
+		time = 0;
+		signalX = [];
+		signalY = [];
+		state = "user"
+		
+	}
+	onmousemove = function(e){
+		mouse.x_prev = mouse.x;
+		mouse.y_prev = mouse.y;
+	
+		mouse.x = e.x;
+		mouse.y = e.y;
+	}
+	
+	onmouseup = function(e){
+		for(var i=0;i<drawing.length;i+=1){
+			var angle = map(i,0,25,0,Math.PI*2);
+			signalX.push( drawing[i].x -300);
+			signalY.push( drawing[i].y -300);
+		}
+	
+		fourierX = dft(signalX);
+		fourierY = dft(signalY);
+		
+		state = "fourier";
+	}
+	
+	window.onload = function(){
+	
+		/*
+		for(var i=0;i<25;++i){
+			var angle = map(i,0,25,0,Math.PI*2);
+			signalX[i] = 100*Math.cos(angle);
+			signalY[i] = 100*Math.sin(angle);
+		}
+		*/
+		
+		/*
+		for(var i=0;i<drawing.length;i+=20){
+			var angle = map(i,0,25,0,Math.PI*2);
+			signalX.push( drawing[i].x);
+			signalY.push( drawing[i].y);
+		}
+	
+	
+		fourierX = dft(signalX);
+		fourierY = dft(signalY);
+		*/
+	
+		loop();
+	}
+	
+	function loop(){
+		requestAnimationFrame(loop);
+		for(var l=0;l<loopSpeed;++l){
+		
+			if(state=="fourier"){
+				ctx.clearRect(0,0,canvas.width,canvas.height);
+				ctx.save();
+				//ctx.translate(300,canvas.height/2);
+				
+				var v = cycle(300,canvas.height/2,fourierY,time,Math.PI/2);
+				var h = cycle(300,canvas.height/6,fourierX,time,0);
+				
+				
+				//wave.unshift(y);
+				path.unshift({x:h.x,y:v.y});
+				
+				ctx.save();
+				ctx.beginPath();
+				
+				ctx.translate(300,300);
+				ctx.moveTo(path[0].x,path[0].y);
+				ctx.strokeStyle = 'red';
+				ctx.lineCap = 'round';
+				ctx.lineWidth = 3;
+				for(var i=0;i<path.length;++i){
+					ctx.lineTo(path[i].x,path[i].y);
+				}
+				ctx.stroke();
+				ctx.closePath();
+				ctx.restore();
+				
+				
+				/*
+				if(wave.length>100)
+					path.pop();
+				*/
+				/*
+				ctx.beginPath();
+				ctx.moveTo(x,y);
+				//ctx.translate(200,0);
+				ctx.strokeStyle = 'blue';
+				ctx.lineCap = 'round';
+				ctx.lineWidth = 3;
+				ctx.lineTo(i,wave[i]);
+				ctx.stroke();
+				*/
+				
+				ctx.save();
+				/*
+				ctx.beginPath();
+				ctx.moveTo(x,y);
+				ctx.translate(200,0);
+				ctx.strokeStyle = 'red';
+				ctx.lineCap = 'round';
+				ctx.lineWidth = 3;
+				for(var i=0;i<wave.length;++i){
+					ctx.lineTo(i,wave[i]);
+				}
+				ctx.stroke();
+				//ctx.closePath();
+				
+				if(wave.length>500)
+					wave.pop();
+				*/	
+				ctx.restore();
+				
+				
+				//ctx.restore();
+				
+				var dt = (Math.PI*2)/signalX.length;
+				time += dt;
+				
+				if(time>Math.PI*2){
+					time=0;
+					path=[];
+				}
+				/*
+				if(time<0){
+					time = Math.PI*2 - time;
+				}
+				else if(time>Math.PI*2){
+					time = time - Math.PI*2;
+				}
+				*/
+			}
+			else if(state=="user"){
+				ctx.beginPath();
+				ctx.moveTo(mouse.x_prev,mouse.y_prev);
+				ctx.lineTo(mouse.x,mouse.y);
+				ctx.stroke();
+				ctx.closePath();
+			
+				drawing.push({x:mouse.x,y:mouse.y});
+			}
+		
+		}
+	}
+	
+	function cycle(x,y,signal,t,add){
+		ctx.save();
+		ctx.translate(x,y);
+		x=y=0;
+		for(var i=0;i<signal.length;++i){
+			var prevx =x;
+			var prevy =y;
+		
+			var n = signal[i].f;
+			var rad =  signal[i].A;
+			var phase = signal[i].phase;
+			x += rad * Math.cos(n*t+phase+add);
+			y += rad * Math.sin(n*t+phase+add);
+			
+			
+			arc(prevx,prevy,rad,0,Math.PI*2,'black',false);
+			//arc(x,y,4,0,Math.PI*2,'black',true);
+			
+			ctx.beginPath();
+			ctx.moveTo(prevx,prevy);
+			ctx.lineWidth = 5;
+			ctx.lineCap = 'round';
+			ctx.lineTo(x,y);
+			ctx.stroke();
+			ctx.closePath();
+		}
+		ctx.restore();
+		return {x:x,y:y};
+	}
+	
+	function map(n,s1,so1,s2,so2){
+		return ( (n-s1)/(so1-s1) )*(so2-s2) + s2;
+	}
+	
+	function dft(x){
+		var sigma = 0;
+		var X = [];
+		var N = x.length;
+		for(var k=0;k<N;++k){
+			var a = 0;
+			var b = 0;
+			for(var n=0;n<N;++n){
+				var phi = (Math.PI*2*k*n)/N;
+				a += x[n] * Math.cos(phi);
+				b -= x[n] * Math.sin(phi);
+			}
+			a = a/N;
+			b = b/N;
+			
+			var f = k;
+			var A = Math.sqrt(a*a + b*b);
+			var phase = Math.atan2(b,a);
+			
+			X[k] = {
+				a : a,
+				b : b,
+				f : f,
+				A : A,
+				phase : phase,
+			};
+		}
+		return X;
+	}
+	
+	function arc(x,y,r,i,e,color,fill){
+		ctx.beginPath();
+		ctx.arc(x,y,r,i,e);
+		ctx.strokeStyle = color;
+		ctx.fillStyle = color;
+		ctx.lineWidth = 1;
+		if(fill)
+			ctx.fill();
+		else	
+			ctx.stroke();
+		ctx.closePath();
+	}	
+    </script>
+</html>
