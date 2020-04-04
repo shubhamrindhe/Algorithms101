@@ -31,6 +31,12 @@ class Huffman_Codec:
 	def remove_extra_bits(encoded_string):
 		return encoded_string[: -1 * (8 + int(encoded_string[-8:], 2))]
 		
+	def load_codes(self, codes_filename):
+		with open(codes_filename, 'r') as codes_file:
+			self.keys = json.loads(codes_file.read())
+			print(self.keys)
+
+		
 	def analyse_file(self, filename):
 		self.key_frequency_table = {}
 		with open(filename) as input_file:
@@ -89,6 +95,12 @@ class Huffman_Codec:
 	def generate_keys(self):
 		self.keys = { code: key for key, code in self.codes.items() }
 
+	def kowalski_analysis(self, i_filename):
+		self.analyse_file(i_filename)
+		self.generate_tree()
+		self.generate_codes()
+		self.generate_keys()
+		
 	def encode(self, string):
 		encoded_string = ''
 		for character in string:
@@ -106,14 +118,6 @@ class Huffman_Codec:
 		return decoded_string
 		
 	def compress(self, encoded_string, b_filename):
-		'''
-		extra_bit_count = 8 - len(encoded_string) % 8
-		extra_code = ''
-		for i in range(extra_bit_count):
-			extra_code += '0'
-		encoded_string += extra_code
-		encoded_string += "{0:08b}".format(extra_bit_count)
-		'''
 		encoded_string += Huffman_Codec.generate_extra_bits(8 - len(encoded_string) % 8) 
 		b = bytearray()
 		for i in range(0, len(encoded_string), 8):
@@ -123,7 +127,8 @@ class Huffman_Codec:
 			o_file.write(bytes(b))
 		
 	def compress_file(self, i_filename, b_filename):
-		with open(i_filename, 'r') as i_file, open(b_filename, 'wb') as b_file:
+		self.kowalski_analysis(i_filename)
+		with open(i_filename, 'r') as i_file, open(b_filename, 'wb') as b_file, open(b_filename+'.codes.json', 'w') as codes_file:
 			code = ''
 			bytes = bytearray()
 			character = i_file.read(1)
@@ -137,13 +142,6 @@ class Huffman_Codec:
 				character = i_file.read(1)
 				if character == '':
 					# we are in the endgame now.
-					'''
-					extra_code_len = 8 - len(code) % 8
-					extra_code = ''
-					for i in range(extra_code_len):
-						extra_code += '0'
-					code += extra_code + '{0:08b}'.format(extra_code_len)
-					'''
 					code += Huffman_Codec.generate_extra_bits(8 - len(code) % 8)
 					bytes = bytearray()
 					for i in range(0, len(code), 8):
@@ -152,11 +150,15 @@ class Huffman_Codec:
 					b_file.write(bytes)
 					break
 			b_file.close()
+			i_file.close()
+			codes_string = json.dumps(self.keys, separators=(',', ':'))
+			codes_file.write(codes_string)
+			codes_file.close()
 
 	def analyse_codes(self):
 		codes_list = []
 		max_code = 0
-		for key, code in self.codes.items():
+		for code, key in self.keys.items():
 			if len(code) > max_code:
 				max_code = len(code)
 		return max_code
@@ -189,10 +191,6 @@ class Huffman_Codec:
 						Bq.append(next_byte)
 						byte = Bq.pop(0)
 						bits = Huffman_Codec.stringify_byte(byte)
-						'''
-						for bit in bits:
-							bq.append(bit)
-						'''
 						bq += [bit for bit in bits]
 					else:
 						# we are in the endgame now.
@@ -210,43 +208,3 @@ class Huffman_Codec:
 				code += bq.pop(0)
 			print("\n\n\t mission accomplished!")
 		return
-		
-	def write_codes(self):
-		code_str = json.dumps(self.codes, separators=(',', ':'))
-		print(code_str)
-	
-		
-
-		
-
-codec = Huffman_Codec()
-
-f = open('otext.txt', 'r')
-
-#string = "abcdefghijklmnopqrstuvwxyz"
-string = f.read()
-
-print(codec.analyse_file('otext.txt'))
-print(codec.generate_tree())
-print(codec.generate_codes())
-print(codec.generate_keys())
-
-codec.compress_file('otext.txt', 'test.bin')
-codec.analyse_codes()
-codec.extract_file('test.bin', 'test.json')
-codec.write_codes()
-'''
-codec.compress(e, 'test1.bin')
-codec.extract('test1.bin', 'test1.py')
-'''
-
-#print(codec.analyse_file('otext.txt'),Huffman_Codec.new_node())
-
-
-# testing static methods
-'''
-node_a = Huffman_Codec.new_node(10,'A',None,None)
-node_b = Huffman_Codec.new_node(20,'B',None,None)
-print(node_a,node_b)
-print(Huffman_Codec.merge_nodes(node_a, node_b))
-'''
