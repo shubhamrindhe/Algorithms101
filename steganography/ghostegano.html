@@ -103,52 +103,43 @@
 	
 </head>
 	<body>
-		<div class="center">	
-			<span id="displayAngle" class="center">45</span>
-			<input id="angle" class="slider" type="range" value="45" min="15" max="75" step="1" />
-		</div>	
-		
-		<span id="random" onclick="random_Tree()">random</span>
-		<span onclick="_Tree()" id="go">go</span>
-		
-	
 		<canvas id="canvas"></canvas>
+		<center>
+			<table id="clr"></table>
+		</center>
 	</body>
 	
 	<script type="text/javascript">
 
 	var canvas,ctx;
 	var height = innerWidth < innerHeight ? 50 : 80;
-	var min = 10;
-	var randomTree = true;
+	var t;
 
 	window.onload = function(){
 		initCanvas();
-
-		pytree();
-	}
-	angle.onmousemove = function(e){
-		if(!randomTree)
-			pytree();
-		document.getElementById('displayAngle').innerHTML = document.getElementById('angle').value;
 		
-	}
-	//window.addEventListener("resize", pyTree, false);
-	/*["resize", "click", "touchdown"].forEach(event => {
-		document.addEventListener(event, pyTree(innerWidth/2,innerHeight,height), false);
-	});*/
-	function _Tree(){
-		randomTree = false;
-		pytree();
-	}
-	function random_Tree(){
-		randomTree = true;
-		pytree();
+		t = document.getElementById('clr');
+		var colors = "";
+		var color_count = 0;
+		for (var r=0;r<=255;r+=85) {
+			for (var g=0;g<=255;g+=85) {
+				for (var b=0;b<=255;b+=85) {
+					
+					colors += '<tr style="border:solid red 1px">';
+					colors += '<td>'+color_count+'</td>';
+					for (var alpha=0;alpha<=1;alpha+=0.33) {
+						colour = 'rgba('+r+','+g+','+b+','+alpha+')';
+						colors += '<td style="background:'+colour+'">'+colour+'</td>';
+					}
+					colors += "</tr>";
+					++color_count;
+				}
+			}
+		}
+
+		t.innerHTML = colors;
 	}
 	
-	function pytree(){
-		Tree(innerWidth/2,innerHeight-100,height);
-	}
 	function initCanvas(){
 		canvas = document.getElementById('canvas');
 		ctx = canvas.getContext('2d');
@@ -160,41 +151,7 @@
 		canvas.width = innerWidth;
 		canvas.height = innerHeight;
 	}
-	
-	function Tree(x,y,length){
-		ctx.clearRect(0,0,canvas.width,canvas.height);
-	
-		ctx.save();
-		ctx.translate(x-length*0.5,y);
-		branch(length,randomTree ? random(15,75) : document.getElementById('angle').value);
-		ctx.restore();
-	}
-	function branch(length,angle){		
-		if(length<5){ 
-			ctx.fillStyle ='green' ;
-			ctx.fillRect(0,0,length,length);
-			ctx.fillStyle ='black';
-			return;
-		}else{
-			ctx.fillRect(0,0,length,length);
-			
-			var adj = length*Math.cos(angle* Math.PI / 180);
-			var opp = length*Math.sin(angle* Math.PI / 180);
-			
-			ctx.save();
-			ctx.translate(length,0);
-			ctx.rotate(angle*Math.PI/180);
-			ctx.translate(-adj,-adj);
-			branch(adj, randomTree ? random(15,75) : document.getElementById('angle').value );
-			ctx.restore();
-				
-			ctx.save();
-			ctx.rotate((angle-90)*Math.PI/180);
-			ctx.translate(0,-opp);
-			branch(opp, randomTree ? random(15,75) : document.getElementById('angle').value );
-			ctx.restore();
-		}
-	}
+
 	function random(a,b){
 		return a + (b-a)*Math.random();
 	}	
