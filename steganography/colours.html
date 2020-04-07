@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+	<meta name="author" content="shubhamrindhe" id="author"/>
+	<title>color</title>
+	<style>
+	*,body{
+		padding: 0;
+		margin: 0;
+	}
+	</style>
+
+	
+</head>
+<body>
+		<center>
+			<table id="colour_2bit"></table>
+			<br><br>
+			<br><br>
+			<br><br>
+			<table id="colour_256map"></table>
+		</center>
+</body>
+<script type="text/javascript">
+
+	var canvas,ctx;
+	var height = innerWidth < innerHeight ? 50 : 80;
+	var t;
+
+	window.onload = function(){
+		
+		t = document.getElementById('colour_2bit');
+		var colors = "";
+		var color_count = 0;
+		for (var r=0;r<=255;r+=85) {
+			for (var g=0;g<=255;g+=85) {
+				for (var b=0;b<=255;b+=85) {
+					
+					colors += '<tr style="border:solid red 1px">';
+					colors += '<td>'+color_count+'</td>';
+					for (var alpha=0;alpha<=1;alpha+=0.33) {
+						colour = 'rgba('+r+','+g+','+b+','+alpha+')';
+						colors += '<td style="background:'+colour+'">'+colour+'</td>';
+					}
+					colors += "</tr>";
+					++color_count;
+				}
+			}
+		}
+
+		t.innerHTML = colors;
+	}
+
+	function colour_idx(r, g, b) {
+		return 255*255*r + 255*g + b;
+	}
+	
+	function color_from_idx(clr_idx) {
+		var r = clr_idx % 255;
+		var g = clr_idx % 255;
+		var b = clr_idx % 255;
+	}
+	
+	function random(a,b){
+		return a + (b-a)*Math.random();
+	}	
+	
+	function color_8bit(r, g, b, a) {
+		var r2bit = Math.floor(map(r,0,255,0,3));
+		var g2bit = Math.floor(map(g,0,255,0,3));
+		var b2bit = Math.floor(map(b,0,255,0,3));
+		var a2bit = Math.floor(map(a,0,255,0,3));
+		//return r2bit.toString(2) + g2bit.toString(2) + b2bit.toString(2) + a2bit.toString(2);
+		return (((( (r2bit << 2 ) | g2bit ) << 2 ) | b2bit) << 2) | a2bit;
+	} 
+	
+	function map(n,s1,so1,s2,so2) {
+		return ( (n-s1)/(so1-s1) )*(so2-s2) + s2;
+	}
+</script>
+</html>
