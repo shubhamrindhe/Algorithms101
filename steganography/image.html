@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+	<meta name="author" content="shubhamrindhe" id="author"/>
+	<title>Neural Image Filters</title>
+	<style>
+		body{
+			padding:0;
+			margin:0;
+		}
+		canvas{
+			position:absolute;
+			left:50%;
+			top:50%;
+			transform:translate(-50%,-50%);
+			border: 2px solid black;
+		}
+		
+	</style>
+	<script>
+		var canvas;
+		var ctx;
+		var pic  = new Image();
+		pic.src = '../_/assets/images/young_shubham.jpg';
+		
+		window.onload = function(){
+		
+		
+		
+			canvas = document.getElementById('canvas');
+			ctx = canvas.getContext('2d');
+			//ctx.fillRect(200,200,50,50);
+			
+			canvas.width = innerWidth;
+			canvas.heigth = innerHeight;
+			
+			//pic.scale(3.85,3.85);
+			
+			ctx.drawImage(pic,0,0,280,280);		//drawImage(picObj,x,y)
+			//ctx.drawImage(pic,0,0,100,100,10,10,100,100);		//drawImage(picObj,x,y,w,h)
+			
+			var img = ctx.getImageData(0,0,280,280);
+			
+			
+			/*
+			console.log(img);
+			var data = {};
+			data.width = img.width;
+			data.height = img.height;
+			data.data = Array.prototype.slice.call(img.data);
+			console.log(data);
+			saveJSON(data,"young_shubham.json");
+			*/
+			
+			
+				
+			//copy.data.set(new Uint8ClampedArray(x.data) );
+			
+			
+			
+			//console.log(typeof copy);
+			//console.log(canvas.nodeName);
+			//console.log(canvas instanceof Canvass);
+		
+			//savior("yo");
+			
+			//saveJSON(canvas);
+			
+			//console.log(canvas instanceof HTMLCanvasElement);
+			
+			
+			
+			
+			
+			
+			
+			
+			/*
+			ctx.font = "bold italic 30px Arial,sans-serif";
+			ctx.textBaseline  = 'hanging' ; 	// top , middel , bottom , hanging , alphabetic , ideographic
+			ctx.fillText('Hello World',200,200);
+			ctx.strokeText('Hello World',200,200);
+			*/
+			/*
+			assemble("../../",function(){
+			
+					brain = new NeuralNetwork(3,[3,3]);
+					console.log();
+					var x = ctx.getImageData(0,0,280,280);
+			
+					//console.log(x);
+					
+					//ctx.putImageData(img,200,200);
+					
+					var copy = ctx.createImageData(x.width,x.height);
+						for(var i=0 ; i<img.data.length;++i){
+							copy.data[i] = 180;///img.data[i];
+						}
+					
+					
+					var net = new NeuralNetwork(3,[50,3]);
+			
+			
+					for(var i=0 ; i<img.data.length;i+=4){
+						var inp = [ img.data[i],img.data[i+1],img.data[i+2] ]; 
+						var out = net.feedforward(inp);
+						
+						var r = Math.round(map(out[0],0,1,0,255));
+						var g = Math.round(map(out[1],0,1,0,255));
+						var b = Math.round(map(out[2],0,1,0,255));
+						
+						copy.data[i] = r;///img.data[i];
+						copy.data[i+1] = g;///img.data[i];
+						copy.data[i+2] = b;///img.data[i];
+						copy.data[i+3] = 255;///img.data[i];
+					}
+					
+					//console.log(copy);
+					
+					ctx.putImageData(copy,290,0);
+					
+					var n = new NeuralNetwork(2,[2,1]);
+					n.learn([1,1],[0]);
+					
+			});
+			*/
+		};
+</script>
+</head>
+<body>		
+	<div class="canvasDiv">
+		<canvas  onclick="toggleDraw()" id="canvas" class="canvas" width="280" height="280"></canvas>
+	</div>
+</body>
+</html>

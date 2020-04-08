@@ -74,7 +74,14 @@
 		var a2bit = Math.floor(map(a,0,255,0,3));
 		//return r2bit.toString(2) + g2bit.toString(2) + b2bit.toString(2) + a2bit.toString(2);
 		return (((( (r2bit << 2 ) | g2bit ) << 2 ) | b2bit) << 2) | a2bit;
-	} 
+	}
+	
+	function color_8bit_2_rgb() {
+	}
+	
+	function map_rgb_2_256(r, g, b) {
+		return 0
+	}
 	
 	function map(n,s1,so1,s2,so2) {
 		return ( (n-s1)/(so1-s1) )*(so2-s2) + s2;
