@@ -23,25 +23,68 @@
 		var canvas;
 		var ctx;
 		var pic  = new Image();
-		pic.src = '../_/assets/images/young_shubham.jpg';
+		
+		var string = 'shubham';
+		
+		
+		String.prototype.ljust = function (length, _char_) {
+			var fill = [];
+			while ( fill.length + this.length < length) {
+				fill[fill.length] = _char_;
+			}
+			return fill.join('') + this; 
+		}
+		
+		String.prototype.rjust = function (length, _char_) {
+			var fill = [];
+			while ( fill.length + this.length < length) {
+				fill[fill.length] = _char_;
+			}
+			return this + fill.join(''); 
+		}
 		
 		window.onload = function(){
 		
+			pic.src = '../_/assets/images/young_shubham.jpg';
+			
+			pic.onload = function (){
+			
+				canvas = document.getElementById('canvas');
+				ctx = canvas.getContext('2d');
+				
+				canvas.width = pic.width;
+				canvas.height = pic.height;
+				
+				//ctx.fillRect(200,200,50,50);				
+				//pic.scale(3.85,3.85);
+				
+				ctx.drawImage(pic,0,0,pic.width,pic.height);		//drawImage(picObj,x,y)
+				//ctx.drawImage(pic,0,0,100,100,10,10,100,100);		//drawImage(picObj,x,y,w,h)	
+
+				var copy = ctx.createImageData(3,3);
+				/*
+				for(var i=0 ; i<copy.data.length;++i){
+					copy.data[i] = 255;///img.data[i];
+				}
+				*/
+					
+				
+				for(var i=0 ; i<copy.data.length;++i){	
+					copy.data[i] = i % 4 == 3 ? 255 :0;
+				}
+				
+				
+				ctx.putImageData(copy,0,0);
+				
+				console.log(copy);
+				
+				var img = ctx.getImageData(0,0,3,3);
+				console.log(img);
+				
+				embed_data_in_image(img, 'shubham')
+			}
 		
-		
-			canvas = document.getElementById('canvas');
-			ctx = canvas.getContext('2d');
-			//ctx.fillRect(200,200,50,50);
 			
-			canvas.width = innerWidth;
-			canvas.heigth = innerHeight;
-			
-			//pic.scale(3.85,3.85);
-			
-			ctx.drawImage(pic,0,0,280,280);		//drawImage(picObj,x,y)
-			//ctx.drawImage(pic,0,0,100,100,10,10,100,100);		//drawImage(picObj,x,y,w,h)
-			
-			var img = ctx.getImageData(0,0,280,280);
 			
 			
 			/*
@@ -127,6 +170,128 @@
 			});
 			*/
 		};
+		
+		function embed_data_in_image (img_data, data) {
+			/*
+			for(var i=0 ; i<img_data.data.length;++i){	
+				img_data.data[i] = i % 4 == 3 ? 255 :0;
+			}
+			*/
+			
+			var code = encode_string(data);
+			console.log('code : ',code,decode_string(code));
+			
+			for (var i=0,j=0 ; i < img_data.data.length && j < code.length;i+=4,++j) {
+				var sliced_byte = split_byte_string(code[j]);
+				console.log(code[j],sliced_byte);
+				img_data.data[i] = embed_bits_to_byte(img_data.data[i], sliced_byte[0]);
+				img_data.data[i+1] = embed_bits_to_byte(img_data.data[i+1], sliced_byte[1]);
+				img_data.data[i+2] = embed_bits_to_byte(img_data.data[i+2], sliced_byte[2]);
+				img_data.data[i+3] = embed_bits_to_byte(img_data.data[i+3], sliced_byte[3]);
+			}
+			
+			extract_data_from_img(img_data);
+			
+			return img_data;
+		}
+		
+		function extract_data_from_img(img_data) {
+			data = [];
+			for (var i=0; i < img_data.data.length; i+=4) {
+				bits = [];
+				
+				bits.push(extract_bits_from_byte(img_data.data[i], 2));
+				bits.push(extract_bits_from_byte(img_data.data[i+1], 2));
+				bits.push(extract_bits_from_byte(img_data.data[i+2], 2));
+				bits.push(extract_bits_from_byte(img_data.data[i+3], 2));
+			
+				console.log(bits);
+			
+				var byte_str = 0b00000000;
+				byte_str = (byte_str | bits[0]) << 1;
+				console.log(byte_str);
+				byte_str = (byte_str | bits[1]) << 1;
+				console.log(byte_str);
+				byte_str = (byte_str | bits[2]) << 1;
+				console.log(byte_str);
+				byte_str = (byte_str | bits[3]) << 1;
+				
+				byte_str = '';
+				bits.forEach( function (e,i,l) {
+					switch (e) {
+						case 0:
+							byte_str += '00';
+							break;
+						case 1:
+							byte_str += '01';
+							break;
+						case 2:
+							byte_str += '10';
+							break;
+						case 3:
+							byte_str += '11';
+							break;
+					}
+				});
+				
+				console.log("hello : ",byte_str, bits[0].toString(2)+bits[1].toString(2)+bits[2].toString(2)+bits[3].toString(2) );
+				data.push(byte_str);
+			}
+			
+			
+			console.log("cjschab",decode_string(data));
+		
+		}
+		
+		function embed_bits_to_byte(_byte_, _bits_) {
+			if (_byte_ < 0 || _byte_ > 255) {
+				return null; 
+			} else {		
+				var data = parseInt(_bits_ , 2);
+				var mask = 0b11111111;
+				for (var i=0;i<_bits_.length;++i) {
+					mask -= Math.pow(2,i);
+				}
+				return (( _byte_ & mask ) | data );
+			}
+		}
+		
+		function extract_bits_from_byte(_byte_ , bit_count) {
+			if (_byte_ < 0 || _byte_ > 255) {
+				return null; 
+			} else {		
+				var mask = 0b00000000;
+				for (var i=0;i<bit_count;++i) {
+					mask += Math.pow(2,i)
+				}
+				return _byte_ & mask;
+			}
+		}
+		
+		function encode_string (data) {
+			_bytes_ = [];
+			for (var i=0; i<data.length; ++i) {
+				_ = data.charCodeAt(i).toString(2).ljust(8,'0');
+				_bytes_.push(_);
+			}
+			return _bytes_;
+		}
+		
+		function decode_string (data) {
+			decoded_string = '';
+			for (var i=0; i<data.length; ++i) {
+				decoded_string += String.fromCharCode(parseInt(data[i], 2));
+			}
+			return decoded_string;
+		}
+		
+		function split_byte_string (byte_string) {
+			if (byte_string.length == 8) {
+				return byte_string.match(/.{1,2}/g);
+			} else {
+				return null;
+			}
+		}
 </script>
 </head>
 <body>		
