@@ -45,8 +45,8 @@
 		
 		window.onload = function(){
 		
-			pic.src = '../_/assets/images/young_shubham.jpg';
-			
+			//pic.src = '../_/assets/images/young_shubham.jpg';
+			pic.src = '_img.png';
 			pic.onload = function (){
 			
 				canvas = document.getElementById('canvas');
@@ -61,6 +61,10 @@
 				ctx.drawImage(pic,0,0,pic.width,pic.height);		//drawImage(picObj,x,y)
 				//ctx.drawImage(pic,0,0,100,100,10,10,100,100);		//drawImage(picObj,x,y,w,h)	
 
+				console.log("ccdsbhb",ctx.getImageData(0,0,ctx.canvas.width,ctx.canvas.height));
+				
+				extract_data_from_img(ctx.getImageData(0,0,ctx.canvas.width,ctx.canvas.height));
+				
 				var copy = ctx.createImageData(3,3);
 				/*
 				for(var i=0 ; i<copy.data.length;++i){
@@ -180,17 +184,26 @@
 			
 			var code = encode_string(data);
 			console.log('code : ',code,decode_string(code));
-			
-			for (var i=0,j=0 ; i < img_data.data.length && j < code.length;i+=4,++j) {
-				var sliced_byte = split_byte_string(code[j]);
-				console.log(code[j],sliced_byte);
-				img_data.data[i] = embed_bits_to_byte(img_data.data[i], sliced_byte[0]);
-				img_data.data[i+1] = embed_bits_to_byte(img_data.data[i+1], sliced_byte[1]);
-				img_data.data[i+2] = embed_bits_to_byte(img_data.data[i+2], sliced_byte[2]);
-				img_data.data[i+3] = embed_bits_to_byte(img_data.data[i+3], sliced_byte[3]);
+			var pixel_idx = 0, j=0;
+			for (pixel_idx=0, j=0; pixel_idx < img_data.data.length && j <= code.length; pixel_idx+=4,++j) {
+				var sliced_byte = split_byte_string(( j==code.length ? '00000000' : code[j] ));
+				/*
+				var sliced_byte;
+				if (j==code.length) {
+					sliced_byte = split_byte_string('00000000');
+				} else {
+					sliced_byte = split_byte_string(code[j]);
+				}
+				*/
+				img_data.data[pixel_idx]   = embed_bits_to_byte(img_data.data[pixel_idx],   sliced_byte[0]);
+				img_data.data[pixel_idx+1] = embed_bits_to_byte(img_data.data[pixel_idx+1], sliced_byte[1]);
+				img_data.data[pixel_idx+2] = embed_bits_to_byte(img_data.data[pixel_idx+2], sliced_byte[2]);
+				img_data.data[pixel_idx+3] = embed_bits_to_byte(img_data.data[pixel_idx+3], sliced_byte[3]);
 			}
-			
+
 			extract_data_from_img(img_data);
+			
+			//savePNG(img_data);
 			
 			return img_data;
 		}
@@ -208,39 +221,18 @@
 				console.log(bits);
 			
 				var byte_str = 0b00000000;
-				byte_str = (byte_str | bits[0]) << 1;
-				console.log(byte_str);
-				byte_str = (byte_str | bits[1]) << 1;
-				console.log(byte_str);
-				byte_str = (byte_str | bits[2]) << 1;
-				console.log(byte_str);
-				byte_str = (byte_str | bits[3]) << 1;
+				byte_str = (byte_str << 2) | bits[0];
+				byte_str = (byte_str << 2) | bits[1];
+				byte_str = (byte_str << 2) | bits[2];
+				byte_str = (byte_str << 2) | bits[3];
 				
-				byte_str = '';
-				bits.forEach( function (e,i,l) {
-					switch (e) {
-						case 0:
-							byte_str += '00';
-							break;
-						case 1:
-							byte_str += '01';
-							break;
-						case 2:
-							byte_str += '10';
-							break;
-						case 3:
-							byte_str += '11';
-							break;
-					}
-				});
+				if (!byte_str) {
+					break;
+				}
 				
-				console.log("hello : ",byte_str, bits[0].toString(2)+bits[1].toString(2)+bits[2].toString(2)+bits[3].toString(2) );
-				data.push(byte_str);
+				data.push(byte_str.toString(2).ljust(8, '0'));
 			}
-			
-			
 			console.log("cjschab",decode_string(data));
-		
 		}
 		
 		function embed_bits_to_byte(_byte_, _bits_) {
@@ -291,6 +283,31 @@
 			} else {
 				return null;
 			}
+		}
+		
+		function getDataURL (img_data, compression_format = 'image/png', quality = 1) {
+			var HTML_canvas = document.createElement('canvas');
+			HTML_canvas.width = img_data.width;
+			HTML_canvas.height = img_data.height;
+			var context = HTML_canvas.getContext('2d');
+			context.putImageData(img_data,0,0);
+			return HTML_canvas.toDataURL(compression_format, quality);
+		}
+		
+		function savePNG (img_data) {
+			/*
+			var HTML_canvas = document.createElement('canvas');
+			HTML_canvas.width = img_data.width;
+			HTML_canvas.height = img_data.height;
+			var context = HTML_canvas.getContext('2d');
+			context.putImageData(img_data,0,0);
+			*/
+			
+			var anchor = document.createElement('a');
+			anchor.download = 'img.png';
+			anchor.href = getDataURL(img_data);//HTML_canvas.toDataURL('image/png',1);
+			document.body.appendChild(anchor);
+			anchor.click();
 		}
 </script>
 </head>
