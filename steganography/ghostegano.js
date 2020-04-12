@@ -40,7 +40,7 @@ function savePNG (img_data) {
 }
 
 function encode_string (data) {
-	_bytes_ = [];
+	var _bytes_ = [];
 	for (var i=0; i<data.length; ++i) {
 		var _ = data.charCodeAt(i).toString(2).ljust(8,'0');
 		_bytes_.push(_);
@@ -49,7 +49,7 @@ function encode_string (data) {
 }
 
 function decode_string (data) {
-	decoded_string = '';
+	var decoded_string = '';
 	for (var i=0; i<data.length; ++i) {
 		decoded_string += String.fromCharCode(parseInt(data[i], 2));
 	}
@@ -123,9 +123,9 @@ function embed_data_in_image (img_data, data) {
 }
 		
 function extract_data_from_img(img_data) {
-	data = [];
+	var data = [];
 	for (var i=0; i < img_data.data.length; i+=4) {
-		bits = [];
+		var bits = [];
 				
 		bits.push(extract_bits_from_byte(img_data.data[i], 2));
 		bits.push(extract_bits_from_byte(img_data.data[i+1], 2));
@@ -133,12 +133,15 @@ function extract_data_from_img(img_data) {
 		bits.push(extract_bits_from_byte(img_data.data[i+3], 2));
 			
 		console.log(bits);
-			
+		
+		var _byte_ = bits.reduce(function (accumulator, current_value) {return (accumulator << 2) | current_value; });
+		
+		/*
 		var _byte_ = 0b00000000;
 		bits.forEach (function (e,i,l) {
 			_byte_ = (_byte_ << 2) | e;
 		});
-		
+		*/
 		/*
 		_byte_ = (_byte_ << 2) | bits[0];
 		_byte_ = (_byte_ << 2) | bits[1];
