@@ -91,39 +91,23 @@ function extract_bits_from_byte(_byte_ , bit_count) {
 
 
 function embed_data_in_image (img_data, data) {
-	/*
-	for(var i=0 ; i<img_data.data.length;++i){	
-		img_data.data[i] = i % 4 == 3 ? 255 :0;
-	}
-	*/
-			
 	var code = encode_string(data);
 	console.log('code : ',code,decode_string(code));
 	var pixel_idx = 0, j=0;
 	for (pixel_idx=0, j=0; pixel_idx < img_data.data.length && j <= code.length; pixel_idx+=4,++j) {
 		var sliced_byte = split_byte_string(( j==code.length ? '00000000' : code[j] ));
-		/*
-		var sliced_byte;
-		if (j==code.length) {
-			sliced_byte = split_byte_string('00000000');
-		} else {
-			sliced_byte = split_byte_string(code[j]);
-		}
-		*/
+		
 		img_data.data[pixel_idx]   = embed_bits_to_byte(img_data.data[pixel_idx],   sliced_byte[0]);
 		img_data.data[pixel_idx+1] = embed_bits_to_byte(img_data.data[pixel_idx+1], sliced_byte[1]);
 		img_data.data[pixel_idx+2] = embed_bits_to_byte(img_data.data[pixel_idx+2], sliced_byte[2]);
 		img_data.data[pixel_idx+3] = embed_bits_to_byte(img_data.data[pixel_idx+3], sliced_byte[3]);
 	}
-	extract_data_from_img(img_data);
-
-	//savePNG(img_data);
-	
 	return img_data;
 }
 		
 function extract_data_from_img(img_data) {
 	var data = [];
+	
 	for (var i=0; i < img_data.data.length; i+=4) {
 		var bits = [];
 				
@@ -131,22 +115,13 @@ function extract_data_from_img(img_data) {
 		bits.push(extract_bits_from_byte(img_data.data[i+1], 2));
 		bits.push(extract_bits_from_byte(img_data.data[i+2], 2));
 		bits.push(extract_bits_from_byte(img_data.data[i+3], 2));
-			
-		console.log(bits);
 		
 		var _byte_ = bits.reduce(function (accumulator, current_value) {return (accumulator << 2) | current_value; });
-		
 		/*
 		var _byte_ = 0b00000000;
 		bits.forEach (function (e,i,l) {
 			_byte_ = (_byte_ << 2) | e;
 		});
-		*/
-		/*
-		_byte_ = (_byte_ << 2) | bits[0];
-		_byte_ = (_byte_ << 2) | bits[1];
-		_byte_ = (_byte_ << 2) | bits[2];
-		_byte_ = (_byte_ << 2) | bits[3];
 		*/
 		
 		if (!_byte_) {
@@ -155,6 +130,5 @@ function extract_data_from_img(img_data) {
 				
 		data.push(_byte_.toString(2).ljust(8, '0'));
 	}
-	console.log("cjschab",decode_string(data));
 	return data;
 }
