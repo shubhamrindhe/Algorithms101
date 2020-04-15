@@ -31,9 +31,11 @@
 		
 		window.onload = function(){
 		
-			pic.src = '../_/assets/images/young_shubham.jpg';
-			//pic.src = '_img.png';
+			//pic.src = '../_/assets/images/young_shubham.jpg';
+			pic.src = '_img.png';
 			pic.onload = function (){
+			
+				console.log('cc',get_img_data(pic));
 			
 				canvas = document.getElementById('canvas');
 				ctx = canvas.getContext('2d');
@@ -70,7 +72,7 @@
 				var img = ctx.getImageData(0,0,3,3);
 				console.log(img);
 				
-				embed_data_in_image(img, 'shubham')
+				embed_data_in_image_data(img, 'shubham')
 				*/
 			}
 			
@@ -89,16 +91,48 @@
 					var data = encode_string(event.target.result);
 					console.log(data,'decoded : ',decode_string(data));
 					
-					var img_with_data = embed_data_in_image(IMG_DATA, event.target.result);
-					console.log(decode_string(extract_data_from_img(img_with_data)));
+					var img_with_data = embed_data_in_image_data(IMG_DATA, event.target.result);
+					console.log(decode_string(extract_data_from_img_data(img_with_data)));
 				}
 				fileReader.readAsText(file);
+			}
+			
+			document.getElementById('img_file').onchange = function (event) {
+				var file = event.target.files[0];
+				console.log(event,file,file.type);
+				
+				if (file.type.match('image.*')) {
+					const fileReader = new FileReader();
+					fileReader.onload = function (event) {
+						//console.log(event.target.result);
+						document.getElementById('text').innerHTML = event.target.result;
+						document.getElementById('img_original').src = event.target.result;
+					}				
+					fileReader.onloadend = function (event) {
+						var img = new Image();
+						img.src = event.target.result;
+						var img_data = get_img_data(img);
+						
+						var d = embed_data_in_image_data(img_data,'lion sleeps tonight');
+						console.log(decode_string(extract_data_from_img_data(d)));
+						
+						console.log(img,img.width,img.height,img_data);
+						
+						document.getElementById('img_original').src = event.target.result;
+						document.getElementById('img_stego').src = getDataURL(d);
+					}
+					fileReader.readAsDataURL(file);
+				}
 			}
 		};
 	</script>
 </head>
 <body>	
 	<input type="file" id="txt_file"/>
+	<input type="file" id="img_file"/>
+	
+	<img id="img_original" width="100px" height="100px">
+	<img id="img_stego" width="100px" height="100px">
 	
 	<pre id="text">
 	</pre>

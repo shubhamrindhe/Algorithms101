@@ -14,6 +14,15 @@ String.prototype.rjust = function (length, _char_) {
 	return this + fill.join(''); 
 }
 
+function get_img_data(img) {
+	var HTML_canvas = document.createElement('canvas');
+	HTML_canvas.width = img.width;
+	HTML_canvas.height = img.height;
+	var context = HTML_canvas.getContext('2d');
+	context.drawImage(img,0,0,img.width,img.height);
+	return context.getImageData(0,0,context.canvas.width,context.canvas.height);
+}
+
 function getDataURL (img_data, compression_format = 'image/png', quality = 1) {
 	var HTML_canvas = document.createElement('canvas');
 	HTML_canvas.width = img_data.width;
@@ -90,7 +99,7 @@ function extract_bits_from_byte(_byte_ , bit_count) {
 }
 
 
-function embed_data_in_image (img_data, data) {
+function embed_data_in_image_data (img_data, data) {
 	var code = encode_string(data);
 	console.log('code : ',code,decode_string(code));
 	var pixel_idx = 0, j=0;
@@ -105,7 +114,7 @@ function embed_data_in_image (img_data, data) {
 	return img_data;
 }
 		
-function extract_data_from_img(img_data) {
+function extract_data_from_img_data(img_data) {
 	var data = [];
 	
 	for (var i=0; i < img_data.data.length; i+=4) {
