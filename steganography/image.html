@@ -21,61 +21,10 @@
 	</style>
 	<script src="./ghostegano.js"></script>
 	<script>
-		var canvas;
-		var ctx;
-		var pic  = new Image();
 		
 		var IMG_DATA;
 		
-		var string = 'shubham';
-		
-		window.onload = function(){
-		
-			//pic.src = '../_/assets/images/young_shubham.jpg';
-			pic.src = '_img.png';
-			pic.onload = function (){
-			
-				console.log('cc',get_img_data(pic));
-			
-				canvas = document.getElementById('canvas');
-				ctx = canvas.getContext('2d');
-				
-				canvas.width = pic.width;
-				canvas.height = pic.height;
-				
-				//ctx.fillRect(200,200,50,50);				
-				//pic.scale(3.85,3.85);
-				
-				ctx.drawImage(pic,0,0,pic.width,pic.height);		//drawImage(picObj,x,y)
-				//ctx.drawImage(pic,0,0,100,100,10,10,100,100);		//drawImage(picObj,x,y,w,h)	
-				
-				IMG_DATA = ctx.getImageData(0,0,ctx.canvas.width,ctx.canvas.height);
-
-				console.log("ccdsbhb",ctx.getImageData(0,0,ctx.canvas.width,ctx.canvas.height));
-				/*
-				var copy = ctx.createImageData(3,3);
-				
-				for(var i=0 ; i<copy.data.length;++i){
-					copy.data[i] = 255;///img.data[i];
-				}
-				*/
-		
-		
-				/*
-				for(var i=0 ; i<copy.data.length;++i){	
-					copy.data[i] = i % 4 == 3 ? 255 :0;
-				}
-				
-				ctx.putImageData(copy,0,0);
-				console.log(copy);
-				
-				var img = ctx.getImageData(0,0,3,3);
-				console.log(img);
-				
-				embed_data_in_image_data(img, 'shubham')
-				*/
-			}
-			
+		window.onload = function(){	
 			document.getElementById('txt_file').onchange = function (event) {
 				
 				
@@ -92,6 +41,9 @@
 					console.log(data,'decoded : ',decode_string(data));
 					
 					var img_with_data = embed_data_in_image_data(IMG_DATA, event.target.result);
+					
+					document.getElementById('img_stego').src = getDataURL(img_with_data);
+					
 					console.log(decode_string(extract_data_from_img_data(img_with_data)));
 				}
 				fileReader.readAsText(file);
@@ -112,14 +64,28 @@
 						var img = new Image();
 						img.src = event.target.result;
 						var img_data = get_img_data(img);
-						
-						var d = embed_data_in_image_data(img_data,'lion sleeps tonight');
-						console.log(decode_string(extract_data_from_img_data(d)));
-						
+						IMG_DATA = img_data;
+						console.log(decode_string(extract_data_from_img_data(img_data)));
 						console.log(img,img.width,img.height,img_data);
-						
+						console.log('lol',d.data[2],img_data.data[2]);
 						document.getElementById('img_original').src = event.target.result;
-						document.getElementById('img_stego').src = getDataURL(d);
+					}
+					fileReader.readAsDataURL(file);
+				}
+			}
+			
+			document.getElementById('extract').onclick = function (event) {
+				const file = document.getElementById('img_file').files[0];
+				if (file) {
+					const fileReader = new FileReader();
+					fileReader.onloadend = function (event) {
+						var img = new Image();
+						img.src = event.target.result;
+						var img_data = get_img_data(img);
+						
+						var extracted_text = extract_text_from_img_data(img_data);
+						console.log(extracted_text);
+						document.getElementById('text').innerHTML = extracted_text;
 					}
 					fileReader.readAsDataURL(file);
 				}
@@ -131,14 +97,12 @@
 	<input type="file" id="txt_file"/>
 	<input type="file" id="img_file"/>
 	
-	<img id="img_original" width="100px" height="100px">
-	<img id="img_stego" width="100px" height="100px">
+	<img id="img_original" width="300px" height="300px">
+	<img id="img_stego" width="300px" height="300px">
+	
+	<button id="extract">EXTRACT</button>
 	
 	<pre id="text">
 	</pre>
-	
-	<div class="canvasDiv">
-		<canvas  onclick="toggleDraw()" id="canvas" class="canvas" width="280" height="280"></canvas>
-	</div>
 </body>
 </html>

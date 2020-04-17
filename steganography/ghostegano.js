@@ -101,11 +101,9 @@ function extract_bits_from_byte(_byte_ , bit_count) {
 
 function embed_data_in_image_data (img_data, data) {
 	var code = encode_string(data);
-	console.log('code : ',code,decode_string(code));
 	var pixel_idx = 0, j=0;
 	for (pixel_idx=0, j=0; pixel_idx < img_data.data.length && j <= code.length; pixel_idx+=4,++j) {
 		var sliced_byte = split_byte_string(( j==code.length ? '00000000' : code[j] ));
-		
 		img_data.data[pixel_idx]   = embed_bits_to_byte(img_data.data[pixel_idx],   sliced_byte[0]);
 		img_data.data[pixel_idx+1] = embed_bits_to_byte(img_data.data[pixel_idx+1], sliced_byte[1]);
 		img_data.data[pixel_idx+2] = embed_bits_to_byte(img_data.data[pixel_idx+2], sliced_byte[2]);
@@ -140,4 +138,8 @@ function extract_data_from_img_data(img_data) {
 		data.push(_byte_.toString(2).ljust(8, '0'));
 	}
 	return data;
+}
+
+function extract_text_from_img_data(img_data) {
+	return decode_string(extract_data_from_img_data(img_data));
 }
