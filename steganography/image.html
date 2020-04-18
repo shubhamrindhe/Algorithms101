@@ -19,6 +19,7 @@
 		}
 		
 	</style>
+	<script src="./xor_cipher.js"></script>
 	<script src="./ghostegano.js"></script>
 	<script>
 		
@@ -27,39 +28,40 @@
 		window.onload = function(){	
 			document.getElementById('txt_file').onchange = function (event) {
 				
-				
 				var file = event.target.files[0];
-				
 				console.log(event,file);
 				
+				/*
 				const fileReader = new FileReader();
 				fileReader.onload = function (event) {
 					//console.log(event.target.result);
 					document.getElementById('text').innerHTML = event.target.result;
-					
 					var data = encode_string(event.target.result);
 					console.log(data,'decoded : ',decode_string(data));
-					
 					var img_with_data = embed_data_in_image_data(IMG_DATA, event.target.result);
-					
 					document.getElementById('img_stego').src = getDataURL(img_with_data);
-					
 					console.log(decode_string(extract_data_from_img_data(img_with_data)));
 				}
 				fileReader.readAsText(file);
+				*/
+				
+				
+				readText(file, function (text) {
+					document.getElementById('text').innerHTML = text;
+					var data = encode_string(text);
+					console.log(data,'decoded : ',decode_string(data));
+					//var img_with_data = embed_data_in_image_data(IMG_DATA, text);
+					//document.getElementById('img_stego').src = getDataURL(img_with_data);
+					//console.log(decode_string(extract_data_from_img_data(img_with_data)));
+				});
+				
 			}
 			
 			document.getElementById('img_file').onchange = function (event) {
 				var file = event.target.files[0];
-				console.log(event,file,file.type);
-				
 				if (file.type.match('image.*')) {
-					const fileReader = new FileReader();
-					fileReader.onload = function (event) {
-						//console.log(event.target.result);
-						document.getElementById('text').innerHTML = event.target.result;
-						document.getElementById('img_original').src = event.target.result;
-					}				
+					/*
+					const fileReader = new FileReader();				
 					fileReader.onloadend = function (event) {
 						var img = new Image();
 						img.src = event.target.result;
@@ -67,16 +69,27 @@
 						IMG_DATA = img_data;
 						console.log(decode_string(extract_data_from_img_data(img_data)));
 						console.log(img,img.width,img.height,img_data);
-						console.log('lol',d.data[2],img_data.data[2]);
 						document.getElementById('img_original').src = event.target.result;
 					}
 					fileReader.readAsDataURL(file);
+					*/
+					
+					readImage(file, function (dataURL) {
+						var img = new Image();
+						img.src = dataURL;
+						var img_data = get_img_data(img);
+						IMG_DATA = img_data;
+					
+						document.getElementById('text').innerHTML = dataURL;
+						document.getElementById('img_original').src = dataURL;
+					});
 				}
 			}
 			
 			document.getElementById('extract').onclick = function (event) {
 				const file = document.getElementById('img_file').files[0];
 				if (file) {
+					/*
 					const fileReader = new FileReader();
 					fileReader.onloadend = function (event) {
 						var img = new Image();
@@ -88,9 +101,35 @@
 						document.getElementById('text').innerHTML = extracted_text;
 					}
 					fileReader.readAsDataURL(file);
+					*/
+					readImage(file, function (dataURL) {
+						var img = new Image();
+						img.src = dataURL;
+						var img_data = get_img_data(img);
+						
+						var extracted_text = extract_text_from_img_data(img_data);
+						console.log(extracted_text);
+						document.getElementById('text').innerHTML = extracted_text;
+					});
 				}
 			}
 		};
+		
+		function readImage(file, callback) {
+			readFile(file, 'readAsDataURL', callback);
+		}
+		
+		function readText(file, callback) {
+			readFile(file, 'readAsText', callback);
+		}
+		
+		function readFile(file, readAs = 'readAsText', callback) {
+			const fileReader = new FileReader();
+			fileReader.onloadend = function (event) {
+				callback(event.target.result);
+			}
+			fileReader[readAs](file);
+		}
 	</script>
 </head>
 <body>	
