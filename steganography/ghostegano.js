@@ -124,12 +124,6 @@ function extract_data_from_img_data(img_data) {
 		bits.push(extract_bits_from_byte(img_data.data[i+3], 2));
 		
 		var _byte_ = bits.reduce(function (accumulator, current_value) {return (accumulator << 2) | current_value; });
-		/*
-		var _byte_ = 0b00000000;
-		bits.forEach (function (e,i,l) {
-			_byte_ = (_byte_ << 2) | e;
-		});
-		*/
 		
 		if (!_byte_) {
 			break;

@@ -25,27 +25,12 @@
 		
 		var IMG_DATA;
 		
-		window.onload = function(){	
+		window.onload = function() {	
+		
 			document.getElementById('txt_file').onchange = function (event) {
 				
 				var file = event.target.files[0];
 				console.log(event,file);
-				
-				/*
-				const fileReader = new FileReader();
-				fileReader.onload = function (event) {
-					//console.log(event.target.result);
-					document.getElementById('text').innerHTML = event.target.result;
-					var data = encode_string(event.target.result);
-					console.log(data,'decoded : ',decode_string(data));
-					var img_with_data = embed_data_in_image_data(IMG_DATA, event.target.result);
-					document.getElementById('img_stego').src = getDataURL(img_with_data);
-					console.log(decode_string(extract_data_from_img_data(img_with_data)));
-				}
-				fileReader.readAsText(file);
-				*/
-				
-				
 				readText(file, function (text) {
 					document.getElementById('text').innerHTML = text;
 					var data = encode_string(text);
@@ -60,20 +45,6 @@
 			document.getElementById('img_file').onchange = function (event) {
 				var file = event.target.files[0];
 				if (file.type.match('image.*')) {
-					/*
-					const fileReader = new FileReader();				
-					fileReader.onloadend = function (event) {
-						var img = new Image();
-						img.src = event.target.result;
-						var img_data = get_img_data(img);
-						IMG_DATA = img_data;
-						console.log(decode_string(extract_data_from_img_data(img_data)));
-						console.log(img,img.width,img.height,img_data);
-						document.getElementById('img_original').src = event.target.result;
-					}
-					fileReader.readAsDataURL(file);
-					*/
-					
 					readImage(file, function (dataURL) {
 						var img = new Image();
 						img.src = dataURL;
@@ -81,7 +52,7 @@
 						IMG_DATA = img_data;
 					
 						document.getElementById('text').innerHTML = dataURL;
-						document.getElementById('img_original').src = dataURL;
+						//document.getElementById('img_original').src = dataURL;
 					});
 				}
 			}
@@ -89,27 +60,44 @@
 			document.getElementById('extract').onclick = function (event) {
 				const file = document.getElementById('img_file').files[0];
 				if (file) {
-					/*
-					const fileReader = new FileReader();
-					fileReader.onloadend = function (event) {
-						var img = new Image();
-						img.src = event.target.result;
-						var img_data = get_img_data(img);
-						
-						var extracted_text = extract_text_from_img_data(img_data);
-						console.log(extracted_text);
-						document.getElementById('text').innerHTML = extracted_text;
-					}
-					fileReader.readAsDataURL(file);
-					*/
 					readImage(file, function (dataURL) {
 						var img = new Image();
 						img.src = dataURL;
 						var img_data = get_img_data(img);
 						
+						console.log(img_data);
+						
 						var extracted_text = extract_text_from_img_data(img_data);
 						console.log(extracted_text);
 						document.getElementById('text').innerHTML = extracted_text;
+					});
+				} else {
+					alert('Please select image file.');
+				}
+			}
+			
+			document.getElementById('embed').onclick = function (event) {
+				const img_file = document.getElementById('img_file').files[0];
+				var text = document.getElementById('text').innerHTML;
+				text = "sHuBhAm";
+				if (!img_file) {
+					alert('Please select image file.');
+				} else if (text==''){
+					alert('Specify text to embed in image file.');
+				} else {
+					readImage(img_file, function (dataURL) {
+						var img = new Image();
+						img.src = dataURL;
+						var img_data = get_img_data(img);
+						
+						console.log(img_data);
+						
+						var img_data_with_text = embed_data_in_image_data(img_data, text);
+						console.log(extract_text_from_img_data(img_data_with_text));
+						
+						console.log(img_data_with_text);
+						savePNG(img_data_with_text);
+						//document.getElementById('img_stego').src = getDataURL(img_data_with_text);
 					});
 				}
 			}
@@ -140,8 +128,8 @@
 	<img id="img_stego" width="300px" height="300px">
 	
 	<button id="extract">EXTRACT</button>
+	<button id="embed">EMBED</button>
 	
-	<pre id="text">
-	</pre>
+	<pre id="text"></pre>
 </body>
 </html>
