@@ -102,38 +102,86 @@ function extract_bits_from_byte(_byte_ , bit_count) {
 function embed_data_in_image_data (img_data, data) {
 	var code = encode_string(data);
 	var pixel_idx = 0, j=0;
+	/*
 	for (pixel_idx=0, j=0; pixel_idx < img_data.data.length && j <= code.length; pixel_idx+=4,++j) {
 		var sliced_byte = split_byte_string(( j==code.length ? '00000000' : code[j] ));
 		img_data.data[pixel_idx]   = embed_bits_to_byte(img_data.data[pixel_idx],   sliced_byte[0]);
 		img_data.data[pixel_idx+1] = embed_bits_to_byte(img_data.data[pixel_idx+1], sliced_byte[1]);
-		img_data.data[pixel_idx+2] = embed_bits_to_byte(img_data.data[pixel_idx+2], sliced_byte[2]);
-		img_data.data[pixel_idx+3] = embed_bits_to_byte(img_data.data[pixel_idx+3], sliced_byte[3]);
+		img_data.data[pixel_idx+2] = embed_bits_to_byte(img_data.data[pixel_idx+2], sliced_byte[2] + sliced_byte[3]);
+		//img_data.data[pixel_idx+3] = embed_bits_to_byte(img_data.data[pixel_idx+3], sliced_byte[3]);
 	}
+	*/
+	while (pixel_idx < img_data.data.length && j <= code.length) {
+		
+		var sliced_byte = split_byte_string(( j==code.length ? '00000000' : code[j] ));
+		img_data.data[pixel_idx]   = embed_bits_to_byte(img_data.data[pixel_idx],   sliced_byte[0]);
+		img_data.data[pixel_idx+1] = embed_bits_to_byte(img_data.data[pixel_idx+1], sliced_byte[1]);
+		img_data.data[pixel_idx+2] = embed_bits_to_byte(img_data.data[pixel_idx+2], sliced_byte[2] + sliced_byte[3]);
+		
+		pixel_idx+=4;
+		++j;
+	}
+	
 	return img_data;
 }
 		
 function extract_data_from_img_data(img_data) {
 	var data = [];
-	
+	/*
 	for (var i=0; i < img_data.data.length; i+=4) {
 		var bits = [];
 				
 		bits.push(extract_bits_from_byte(img_data.data[i], 2));
 		bits.push(extract_bits_from_byte(img_data.data[i+1], 2));
-		bits.push(extract_bits_from_byte(img_data.data[i+2], 2));
-		bits.push(extract_bits_from_byte(img_data.data[i+3], 2));
+		bits.push(extract_bits_from_byte(img_data.data[i+2], 4));
+		//bits.push(extract_bits_from_byte(img_data.data[i+3], 2));
+		//var _byte_ = bits.reduce(function (accumulator, current_value) {return (accumulator << 2) | current_value; });
 		
-		var _byte_ = bits.reduce(function (accumulator, current_value) {return (accumulator << 2) | current_value; });
+		var _byte_;
+		_byte_ = bits[0];
+		_byte_ = (_byte_ << 2) | bits[1];
+		_byte_ = (_byte_ << 4) | bits[2];
 		
 		if (!_byte_) {
+			console.log("break", i, bits);
 			break;
 		}
-				
+		
 		data.push(_byte_.toString(2).ljust(8, '0'));
 	}
+	*/
+	
+	var i=0;
+	while (i < img_data.data.length) {
+		var bits = [];
+				
+		bits.push(extract_bits_from_byte(img_data.data[i], 2));
+		bits.push(extract_bits_from_byte(img_data.data[i+1], 2));
+		bits.push(extract_bits_from_byte(img_data.data[i+2], 4));
+		//bits.push(extract_bits_from_byte(img_data.data[i+3], 2));
+		//var _byte_ = bits.reduce(function (accumulator, current_value) {return (accumulator << 2) | current_value; });
+		
+		var _byte_;
+		_byte_ = bits[0];
+		_byte_ = (_byte_ << 2) | bits[1];
+		_byte_ = (_byte_ << 4) | bits[2];
+		
+		if (!_byte_) {
+			console.log("break", i, bits);
+			break;
+		}
+		
+		data.push(_byte_.toString(2).ljust(8, '0'));
+		
+		i += 4;
+	}
+	
+	console.log(data, img_data);
 	return data;
 }
 
 function extract_text_from_img_data(img_data) {
-	return decode_string(extract_data_from_img_data(img_data));
+	const data = extract_data_from_img_data(img_data);
+	console.log(data);
+	return decode_string(data);
 }
