@@ -111,12 +111,29 @@ function embed_data_in_image_data (img_data, data) {
 		//img_data.data[pixel_idx+3] = embed_bits_to_byte(img_data.data[pixel_idx+3], sliced_byte[3]);
 	}
 	*/
-	while (pixel_idx < img_data.data.length && j <= code.length) {
+	
+	code.push('00000000');
+	var bit_queue = [];
+	
+	while (code.length != 0) {
+		bit_queue = bit_queue.concat( code.shift().split('') );
+	}
+	
+	while (true) {
 		
-		var sliced_byte = split_byte_string(( j==code.length ? '00000000' : code[j] ));
-		img_data.data[pixel_idx]   = embed_bits_to_byte(img_data.data[pixel_idx],   sliced_byte[0]);
-		img_data.data[pixel_idx+1] = embed_bits_to_byte(img_data.data[pixel_idx+1], sliced_byte[1]);
-		img_data.data[pixel_idx+2] = embed_bits_to_byte(img_data.data[pixel_idx+2], sliced_byte[2] + sliced_byte[3]);
+		if (pixel_idx < img_data.data.length) {
+			
+		} else {
+			break;
+		}
+		
+		if (bit_queue.length == 0) {
+			break;
+		}
+		
+		img_data.data[pixel_idx]   = embed_bits_to_byte(img_data.data[pixel_idx], bit_queue.shift() + bit_queue.shift());
+		img_data.data[pixel_idx+1] = embed_bits_to_byte(img_data.data[pixel_idx+1], bit_queue.shift() + bit_queue.shift());
+		img_data.data[pixel_idx+2] = embed_bits_to_byte(img_data.data[pixel_idx+2], bit_queue.shift() + bit_queue.shift() + bit_queue.shift() + bit_queue.shift());
 		
 		pixel_idx+=4;
 		++j;
@@ -176,7 +193,6 @@ function extract_data_from_img_data(img_data) {
 		i += 4;
 	}
 	
-	console.log(data, img_data);
 	return data;
 }
 
