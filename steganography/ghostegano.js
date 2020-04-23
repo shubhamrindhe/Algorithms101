@@ -119,6 +119,12 @@ function embed_data_in_image_data (img_data, data) {
 		bit_queue = bit_queue.concat( code.shift().split('') );
 	}
 	
+	var LSB_r = 2; 
+	var LSB_g = 2; 
+	var LSB_b = 4; 
+	
+	const LSB = [LSB_r, LSB_g, LSB_b];
+	
 	while (true) {
 		
 		if (pixel_idx < img_data.data.length) {
@@ -131,9 +137,43 @@ function embed_data_in_image_data (img_data, data) {
 			break;
 		}
 		
-		img_data.data[pixel_idx]   = embed_bits_to_byte(img_data.data[pixel_idx], bit_queue.shift() + bit_queue.shift());
-		img_data.data[pixel_idx+1] = embed_bits_to_byte(img_data.data[pixel_idx+1], bit_queue.shift() + bit_queue.shift());
-		img_data.data[pixel_idx+2] = embed_bits_to_byte(img_data.data[pixel_idx+2], bit_queue.shift() + bit_queue.shift() + bit_queue.shift() + bit_queue.shift());
+		var r_data = '';
+		for (var i=0;i<LSB_r;++i) {
+			r_data += bit_queue.shift();
+		}
+		img_data.data[pixel_idx]   = embed_bits_to_byte(img_data.data[pixel_idx], r_data);
+		
+		var g_data = '';
+		for (var i=0;i<LSB_g;++i) {
+			g_data += bit_queue.shift();
+		}
+		img_data.data[pixel_idx+1] = embed_bits_to_byte(img_data.data[pixel_idx+1], g_data);
+		
+		var b_data = '';
+		for (var i=0;i<LSB_b;++i) {
+			b_data += bit_queue.shift();
+		}
+		img_data.data[pixel_idx+2] = embed_bits_to_byte(img_data.data[pixel_idx+2], b_data);
+		
+		/*
+		LSB.forEach(function (e, i, l) { 
+			var data = '';
+			for (var i=0; i < e; ++i) {
+				data += bit_queue.shift();
+			}
+			img_data.data[pixel_idx + i] = embed_bits_to_byte(img_data.data[pixel_idx + i], data);
+		});
+		*/
+		
+		/*
+		for (var i=0;i<LSB.length;++i) {
+			var data = '';
+			for (var j=0; j < LSB[i]; ++j) {
+				data += bit_queue.shift();
+			}
+			img_data.data[pixel_idx + i] = embed_bits_to_byte(img_data.data[pixel_idx + i], data);
+		}
+		*/
 		
 		pixel_idx+=4;
 		++j;
@@ -168,13 +208,17 @@ function extract_data_from_img_data(img_data) {
 	}
 	*/
 	
+	var LSB_r = 2; 
+	var LSB_g = 2; 
+	var LSB_b = 4; 
+	
 	var i=0;
 	while (i < img_data.data.length) {
 		var bits = [];
 				
-		bits.push(extract_bits_from_byte(img_data.data[i], 2));
-		bits.push(extract_bits_from_byte(img_data.data[i+1], 2));
-		bits.push(extract_bits_from_byte(img_data.data[i+2], 4));
+		bits.push(extract_bits_from_byte(img_data.data[i], LSB_r));
+		bits.push(extract_bits_from_byte(img_data.data[i+1], LSB_g));
+		bits.push(extract_bits_from_byte(img_data.data[i+2], LSB_b));
 		//bits.push(extract_bits_from_byte(img_data.data[i+3], 2));
 		//var _byte_ = bits.reduce(function (accumulator, current_value) {return (accumulator << 2) | current_value; });
 		
