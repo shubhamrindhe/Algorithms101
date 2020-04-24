@@ -212,13 +212,16 @@ function extract_data_from_img_data(img_data) {
 	var LSB_g = 2; 
 	var LSB_b = 4; 
 	
+	var data_size = 8;
+	var bits = [];
 	var i=0;
 	while (i < img_data.data.length) {
-		var bits = [];
-				
-		bits.push(extract_bits_from_byte(img_data.data[i], LSB_r));
-		bits.push(extract_bits_from_byte(img_data.data[i+1], LSB_g));
-		bits.push(extract_bits_from_byte(img_data.data[i+2], LSB_b));
+		
+		/*	
+		bits = [];
+		bits.push( extract_bits_from_byte(img_data.data[i], LSB_r) );
+		bits.push( extract_bits_from_byte(img_data.data[i+1], LSB_g) );
+		bits.push( extract_bits_from_byte(img_data.data[i+2], LSB_b) );
 		//bits.push(extract_bits_from_byte(img_data.data[i+3], 2));
 		//var _byte_ = bits.reduce(function (accumulator, current_value) {return (accumulator << 2) | current_value; });
 		
@@ -233,7 +236,24 @@ function extract_data_from_img_data(img_data) {
 		}
 		
 		data.push(_byte_.toString(2).ljust(8, '0'));
+		*/
 		
+		bits = bits.concat( extract_bits_from_byte(img_data.data[i], LSB_r).toString(2).ljust(LSB_r,'0').split('') );
+		bits = bits.concat( extract_bits_from_byte(img_data.data[i+1], LSB_g).toString(2).ljust(LSB_g,'0').split('') );
+		bits = bits.concat( extract_bits_from_byte(img_data.data[i+2], LSB_b).toString(2).ljust(LSB_b,'0').split('') );
+		
+		if ( bits.length > data_size ) {
+			var data_frag = bits.slice(0, data_size);
+			bits = bits.slice(data_size);
+			
+			var x = parseInt(data_frag.join(''), 2);
+			if (x) {
+				data.push( x.toString(2).ljust(8, '0') );
+			} else {
+				break;
+			}
+		}
+			
 		i += 4;
 	}
 	
