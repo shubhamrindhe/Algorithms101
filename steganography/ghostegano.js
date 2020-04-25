@@ -119,9 +119,9 @@ function embed_data_in_image_data (img_data, data) {
 		bit_queue = bit_queue.concat( code.shift().split('') );
 	}
 	
-	var LSB_r = 2; 
+	var LSB_r = 1; 
 	var LSB_g = 2; 
-	var LSB_b = 4; 
+	var LSB_b = 3; 
 	
 	const LSB = [LSB_r, LSB_g, LSB_b];
 	
@@ -208,9 +208,9 @@ function extract_data_from_img_data(img_data) {
 	}
 	*/
 	
-	var LSB_r = 2; 
+	var LSB_r = 1; 
 	var LSB_g = 2; 
-	var LSB_b = 4; 
+	var LSB_b = 3; 
 	
 	var data_size = 8;
 	var bits = [];
