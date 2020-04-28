@@ -23,10 +23,11 @@
 	<script src="./ghostegano.js"></script>
 	<script src="./stegosaurus.js"></script>
 	<script>
-		
-		var IMG_DATA;
+	
+		var stegosaurus;
 		
 		window.onload = function() {	
+			stegosaurus = new Stegosaurus();
 		
 			document.getElementById('txt_file').onchange = function (event) {
 				
@@ -50,7 +51,6 @@
 						var img = new Image();
 						img.src = dataURL;
 						var img_data = get_img_data(img);
-						IMG_DATA = img_data;
 					
 						document.getElementById('text').innerHTML = dataURL;
 						//document.getElementById('img_original').src = dataURL;
@@ -68,7 +68,8 @@
 							var img_data = get_img_data(img);
 						
 							console.log(img_data);
-							var extracted_text = extract_text_from_img_data(img_data);
+							//var extracted_text = extract_text_from_img_data(img_data);
+							var extracted_text = stegosaurus.extract_text_from_img_data(img_data);
 							console.log(extracted_text);
 							document.getElementById('text').innerHTML = extracted_text;
 						}
@@ -96,7 +97,8 @@
 							console.log(event);
 							var img_data = get_img_data(img);
 							console.log(img_data);
-							var img_data_with_text = embed_data_in_image_data(img_data, text);
+							//var img_data_with_text = embed_data_in_image_data(img_data, text);
+							var img_data_with_text = stegosaurus.embed_text_in_img_data(img_data, text);
 							console.log(extract_text_from_img_data(img_data_with_text));
 							
 							console.log(img_data_with_text);
