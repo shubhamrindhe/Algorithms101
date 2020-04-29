@@ -41,6 +41,14 @@ class Stegosaurus {
 			return (( _byte_ & mask ) | data );
 		}
 	}
+	
+	static embeding_mask () {
+		
+	}
+	
+	static extracting_mask () {
+		
+	}
 			
 	static extract_bits_from_LSB(_byte_ , bit_count) {
 		if (_byte_ < 0 || _byte_ > 255) {
@@ -63,11 +71,11 @@ class Stegosaurus {
 		data.push('00000000');
 		var bit_queue = [];
 		
-		while (data.length != 0) {
-			bit_queue = bit_queue.concat( data.shift().split('') );
-		}
-
 		while (true) {
+			
+			while ( (bit_queue.length < (this.LSB_r + this.LSB_g + this.LSB_b)) && data.length != 0 ) {
+				bit_queue = bit_queue.concat( data.shift().split('') );
+			}
 			
 			if (pixel_idx < img_data.data.length) {
 				
@@ -110,25 +118,24 @@ class Stegosaurus {
 	
 	extract_data_from_img_data(img_data) {
 		var data = [];
-		var data_size = 8;
 		var bits = [];
-		var i=0;
-		while (i < img_data.data.length) {		
-			bits = bits.concat( Stegosaurus.extract_bits_from_LSB(img_data.data[ i ], this.LSB.r).toString(2).ljust(this.LSB.r,'0').split('') );
-			bits = bits.concat( Stegosaurus.extract_bits_from_LSB(img_data.data[i+1], this.LSB.g).toString(2).ljust(this.LSB.g,'0').split('') );
-			bits = bits.concat( Stegosaurus.extract_bits_from_LSB(img_data.data[i+2], this.LSB.b).toString(2).ljust(this.LSB.b,'0').split('') );
+		var pixel_idx=0;
+		while (pixel_idx < img_data.data.length) {		
+			bits = bits.concat( Stegosaurus.extract_bits_from_LSB(img_data.data[ pixel_idx ], this.LSB.r).toString(2).ljust(this.LSB.r,'0').split('') );
+			bits = bits.concat( Stegosaurus.extract_bits_from_LSB(img_data.data[pixel_idx+1], this.LSB.g).toString(2).ljust(this.LSB.g,'0').split('') );
+			bits = bits.concat( Stegosaurus.extract_bits_from_LSB(img_data.data[pixel_idx+2], this.LSB.b).toString(2).ljust(this.LSB.b,'0').split('') );
 			if ( bits.length > this.data_element_size ) {
-				var data_frag = bits.slice(0, this.data_element_size);
+				var data_frags = bits.slice(0, this.data_element_size);
 				bits = bits.slice(this.data_element_size);
 				
-				var x = parseInt(data_frag.join(''), 2);
-				if (x) {
-					data.push( x.toString(2).ljust(8, '0') );
+				var data_element = parseInt(data_frags.join(''), 2);
+				if (data_element) {
+					data.push( data_element.toString(2).ljust(8, '0') );
 				} else {
 					break;
 				}
 			}		
-			i += 4;
+			pixel_idx += 4;
 		}
 		return data;
 	}

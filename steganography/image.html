@@ -110,6 +110,8 @@
 					});
 				}
 			}
+			
+			document.onselectionchange = egg;
 		};
 		
 		function readImage(file, callback) {
@@ -127,9 +129,24 @@
 			}
 			fileReader[readAs](file);
 		}
+		
+		function egg (event) {
+			var selectedText = "";
+			if (typeof window.getSelection() != "undefined") {
+				selectedText = window.getSelection().toString();
+			} else if (typeof document.getSelection() != "undefined") {
+				selectedText = document.getSelection().toString();
+			}
+			console.log(selectedText);
+		}
+		
 	</script>
 </head>
 <body>	
+	<div>
+		<span id="logo">ghostegg</span>
+	</div>
+	
 	<input type="file" id="txt_file"/>
 	<input type="file" id="img_file"/>
 	
