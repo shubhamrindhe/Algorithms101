@@ -18,6 +18,67 @@
 			border: 2px solid black;
 		}
 		
+		#logo {
+			margin:20px;
+			padding:20px;
+			font-family:Courier New;
+		}
+		
+		input[type="checkbox"]{
+			transition-duration:0.1s;
+		}
+
+		input[type="checkbox"]:not(:checked) + label > span.hidden {
+			display : none;
+		}
+		
+		input[type="checkbox"]:checked + label > span.hidden {
+			display : inline-block;
+		}
+		
+		input[type="checkbox"]:not(:checked) + label > span.fade {
+			opacity: 1;
+		}
+		
+		input[type="checkbox"]:checked + label > span.fade {
+			opacity: 0.3;
+			text-decoration:line-through overline underline;
+			
+		}
+		
+		input[type="checkbox"]{
+			display : none;
+		}
+		
+		
+		.hidden, .fade {
+			transition-duration:0.2s;
+		}
+		
+		/*
+		.blockLabel{
+			display:inline-block;
+			padding:1px 5px;
+			border:1px solid rgba(0,0,0,0.8);
+			color:rgba(0,0,0,1);
+			background:rgba(0,0,0,0.3);
+			border-radius:5px;
+		}
+		
+		
+		.blockLabel:hover{
+			background:rgba(0,0,0,0.8);
+			color:#fff;	
+		}
+		input[type="checkbox"]:checked + label:before{
+			display:block;
+			content:"-";
+		}
+		input[type="checkbox"]:not(:checked) + label:before{
+			display:block;
+			content:"{...}";
+		}
+		*/
 	</style>
 	<script src="./xor_cipher.js"></script>
 	<script src="./ghostegano.js"></script>
@@ -112,6 +173,7 @@
 			}
 			
 			document.onselectionchange = egg;
+			//document.getElementById('logo').onselectionchange = egg;
 		};
 		
 		function readImage(file, callback) {
@@ -138,13 +200,20 @@
 				selectedText = document.getSelection().toString();
 			}
 			console.log(selectedText);
+			
+			if (selectedText == "steg") {
+				document.getElementById('egg-status').checked = true;
+			} else {
+				document.getElementById('egg-status').checked = false;
+			}
 		}
 		
 	</script>
 </head>
 <body>	
 	<div>
-		<span id="logo">ghostegg</span>
+		<input type="checkbox" id="egg-status"/>
+		<label id="logo"><span class="fade">gho</span>steg<span class="hidden">ano</span>g<span class="hidden">raphy</span></label>
 	</div>
 	
 	<input type="file" id="txt_file"/>

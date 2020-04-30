@@ -124,7 +124,7 @@ class Stegosaurus {
 			bits = bits.concat( Stegosaurus.extract_bits_from_LSB(img_data.data[ pixel_idx ], this.LSB.r).toString(2).ljust(this.LSB.r,'0').split('') );
 			bits = bits.concat( Stegosaurus.extract_bits_from_LSB(img_data.data[pixel_idx+1], this.LSB.g).toString(2).ljust(this.LSB.g,'0').split('') );
 			bits = bits.concat( Stegosaurus.extract_bits_from_LSB(img_data.data[pixel_idx+2], this.LSB.b).toString(2).ljust(this.LSB.b,'0').split('') );
-			if ( bits.length > this.data_element_size ) {
+			if ( bits.length >= this.data_element_size ) {
 				var data_frags = bits.slice(0, this.data_element_size);
 				bits = bits.slice(this.data_element_size);
 				
