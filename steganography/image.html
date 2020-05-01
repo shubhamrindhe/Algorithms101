@@ -27,6 +27,10 @@
 		input[type="checkbox"]{
 			transition-duration:0.1s;
 		}
+		
+		label {
+			/*text-decoration:underline;*/
+		}
 
 		input[type="checkbox"]:not(:checked) + label > span.hidden {
 			display : none;
@@ -41,44 +45,45 @@
 		}
 		
 		input[type="checkbox"]:checked + label > span.fade {
-			opacity: 0.3;
-			text-decoration:line-through overline underline;
-			
+			opacity: 0.1;
+			text-decoration:line-through;
+			font-weight:900;	
+		}
+		
+		input[type="checkbox"]:checked + label {
+			font-weight:900;	
 		}
 		
 		input[type="checkbox"]{
 			display : none;
 		}
 		
-		
 		.hidden, .fade {
 			transition-duration:0.2s;
 		}
 		
-		/*
-		.blockLabel{
-			display:inline-block;
-			padding:1px 5px;
-			border:1px solid rgba(0,0,0,0.8);
-			color:rgba(0,0,0,1);
-			background:rgba(0,0,0,0.3);
-			border-radius:5px;
+		#information{
+			font-family:Courier New;
+		}
+		#population{
+			font-family:Courier New;
+			overflow:scroll;
+			background:#ccc;
 		}
 		
-		
-		.blockLabel:hover{
-			background:rgba(0,0,0,0.8);
-			color:#fff;	
+		@media only screen and (min-width: 1050px) {
+			#information{
+				position : fixed;
+				width :50%;
+				top : 50%;
+				transform : translate(0,-50%);
+			}
+			
+			#population{
+				width : 50%;
+				float : right;
+			}
 		}
-		input[type="checkbox"]:checked + label:before{
-			display:block;
-			content:"-";
-		}
-		input[type="checkbox"]:not(:checked) + label:before{
-			display:block;
-			content:"{...}";
-		}
-		*/
 	</style>
 	<script src="./xor_cipher.js"></script>
 	<script src="./ghostegano.js"></script>
@@ -199,7 +204,7 @@
 			} else if (typeof document.getSelection() != "undefined") {
 				selectedText = document.getSelection().toString();
 			}
-			console.log(selectedText);
+			//console.log(selectedText);
 			
 			if (selectedText == "steg") {
 				document.getElementById('egg-status').checked = true;
@@ -211,20 +216,38 @@
 	</script>
 </head>
 <body>	
-	<div>
-		<input type="checkbox" id="egg-status"/>
-		<label id="logo"><span class="fade">gho</span>steg<span class="hidden">ano</span>g<span class="hidden">raphy</span></label>
-	</div>
+
+	<center>
+		<div id='information'>
+			<div>
+				<input type="checkbox" id="egg-status"/>
+				<label id="logo"><span class="fade">gho</span><span style="text-decoration:underline">steg</span><span class="hidden">ano</span>g<span class="hidden">raphy</span></label>
+			</div>
+			
+			<input type="file" id="txt_file"/>
+			<input type="file" id="img_file"/>
+			
+			<button id="extract">EXTRACT</button>
+			<button id="embed">EMBED</button>
+			
+		</div>
+	</center>
+		<div id='population'>
+			<pre id="text"></pre>
+		</div>
 	
-	<input type="file" id="txt_file"/>
-	<input type="file" id="img_file"/>
+
+
+
 	
-	<img id="img_original" width="300px" height="300px">
-	<img id="img_stego" width="300px" height="300px">
 	
-	<button id="extract">EXTRACT</button>
-	<button id="embed">EMBED</button>
 	
-	<pre id="text"></pre>
+	
+	<!--img id="img_original" width="300px" height="300px"-->
+	<!--img id="img_stego" width="300px" height="300px"-->
+	
+	
+	
+	
 </body>
 </html>

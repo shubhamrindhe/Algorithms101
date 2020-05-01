@@ -12,10 +12,64 @@ class Stegosaurus {
 		
 	}
 	
+	static string_ljust (string, length, _char_) {
+		var fill = [];
+		while ( fill.length + string.length < length) {
+			fill[fill.length] = _char_;
+		}
+		return fill.join('') + string; 
+	}
+	
+	static string_rjust (string, length, _char_) {
+		var fill = [];
+		while ( fill.length + string.length < length) {
+			fill[fill.length] = _char_;
+		}
+		return string + fill.join(''); 
+	}
+		
+	static xor_encrypt_string(data, key) {
+		var cipher = '';
+		const _key_codes_ = [];
+		
+		if (typeof key == "number") {
+			_key_codes_.push(key);
+		} else if (typeof key == "string") {
+			for (var i=0; i < key.length; ++i) {
+				_key_codes_.push( key.charCodeAt(i) );
+			}
+		}
+		
+		for (var idx = 0; idx < data.length; ++idx) {
+			cipher += String.fromCharCode( data.charCodeAt(idx) ^ _key_codes_[ idx % _key_codes_.length ] );
+		}
+		
+		return cipher;
+	}
+
+	static xor_encrypt_bytes(data, key) {
+		var cipher = [];
+		const _key_codes_ = [];
+		
+		if (typeof key == "number") {
+			_key_codes_.push(key);
+		} else if (typeof key == "string") {
+			for (var i=0; i < key.length; ++i) {
+				_key_codes_.push( key.charCodeAt(i) );
+			}
+		}
+		
+		for (var idx = 0; idx < data.length; ++idx) {
+			cipher.push( data[idx] ^ _key_codes_[ idx % _key_codes_.length ] );
+		}
+		
+		return cipher;
+	}
+	
 	static encode_string (data) {
 		var _bytes_ = [];
 		for (var i=0; i<data.length; ++i) {
-			var _ = data.charCodeAt(i).toString(2).ljust(8,'0');
+			var _ = Stegosaurus.string_ljust(data.charCodeAt(i).toString(2), 8, '0');
 			_bytes_.push(_);
 		}
 		return _bytes_;
@@ -120,17 +174,17 @@ class Stegosaurus {
 		var data = [];
 		var bits = [];
 		var pixel_idx=0;
-		while (pixel_idx < img_data.data.length) {		
-			bits = bits.concat( Stegosaurus.extract_bits_from_LSB(img_data.data[ pixel_idx ], this.LSB.r).toString(2).ljust(this.LSB.r,'0').split('') );
-			bits = bits.concat( Stegosaurus.extract_bits_from_LSB(img_data.data[pixel_idx+1], this.LSB.g).toString(2).ljust(this.LSB.g,'0').split('') );
-			bits = bits.concat( Stegosaurus.extract_bits_from_LSB(img_data.data[pixel_idx+2], this.LSB.b).toString(2).ljust(this.LSB.b,'0').split('') );
+		while (pixel_idx < img_data.data.length) {
+			bits = bits.concat( Stegosaurus.string_ljust(Stegosaurus.extract_bits_from_LSB(img_data.data[ pixel_idx ], this.LSB.r).toString(2), this.LSB.r, '0').split('') );
+			bits = bits.concat( Stegosaurus.string_ljust(Stegosaurus.extract_bits_from_LSB(img_data.data[pixel_idx+1], this.LSB.g).toString(2), this.LSB.g, '0').split('') );
+			bits = bits.concat( Stegosaurus.string_ljust(Stegosaurus.extract_bits_from_LSB(img_data.data[pixel_idx+2], this.LSB.b).toString(2), this.LSB.b, '0').split('') );
 			if ( bits.length >= this.data_element_size ) {
 				var data_frags = bits.slice(0, this.data_element_size);
 				bits = bits.slice(this.data_element_size);
 				
 				var data_element = parseInt(data_frags.join(''), 2);
 				if (data_element) {
-					data.push( data_element.toString(2).ljust(8, '0') );
+					data.push( Stegosaurus.string_ljust(data_element.toString(2), 8, '0') );
 				} else {
 					break;
 				}
