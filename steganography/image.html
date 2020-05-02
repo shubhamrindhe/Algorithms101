@@ -4,12 +4,13 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 	<meta name="author" content="shubhamrindhe" id="author"/>
-	<title>Steganography</title>
+	<title>Ghostegg - Steganography Tool</title>
 	<style>
 		body{
 			padding:0;
 			margin:0;
 		}
+		
 		canvas{
 			position:absolute;
 			left:50%;
@@ -19,9 +20,10 @@
 		}
 		
 		#logo {
-			margin:20px;
-			padding:20px;
 			font-family:Courier New;
+			font-size:15px;
+			font-family:verdana;
+			letter-spacing:4px;
 		}
 		
 		input[type="checkbox"]{
@@ -65,6 +67,11 @@
 		#information{
 			font-family:Courier New;
 		}
+		
+		#information > div {
+			padding:20px 20px 20px 20px;
+		}
+		
 		#population{
 			font-family:Courier New;
 			overflow:scroll;
@@ -89,9 +96,7 @@
 	<script src="./ghostegano.js"></script>
 	<script src="./stegosaurus.js"></script>
 	<script>
-	
 		var stegosaurus;
-		
 		window.onload = function() {	
 			stegosaurus = new Stegosaurus();
 		
@@ -212,11 +217,9 @@
 				document.getElementById('egg-status').checked = false;
 			}
 		}
-		
 	</script>
 </head>
-<body>	
-
+<body>
 	<center>
 		<div id='information'>
 			<div>
@@ -224,30 +227,21 @@
 				<label id="logo"><span class="fade">gho</span><span style="text-decoration:underline">steg</span><span class="hidden">ano</span>g<span class="hidden">raphy</span></label>
 			</div>
 			
-			<input type="file" id="txt_file"/>
-			<input type="file" id="img_file"/>
+			<div>
+				<input type="file" id="txt_file"/>
+				<input type="file" id="img_file"/>
+			</div>
 			
-			<button id="extract">EXTRACT</button>
-			<button id="embed">EMBED</button>
-			
+			<div>
+				<button id="extract">EXTRACT</button>
+				<button id="embed">EMBED</button>
+			</div>
 		</div>
 	</center>
 		<div id='population'>
 			<pre id="text"></pre>
 		</div>
-	
-
-
-
-	
-	
-	
-	
 	<!--img id="img_original" width="300px" height="300px"-->
 	<!--img id="img_stego" width="300px" height="300px"-->
-	
-	
-	
-	
 </body>
 </html>

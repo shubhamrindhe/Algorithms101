@@ -69,7 +69,7 @@ class Stegosaurus {
 	static encode_string (data) {
 		var _bytes_ = [];
 		for (var i=0; i<data.length; ++i) {
-			var _ = Stegosaurus.string_ljust(data.charCodeAt(i).toString(2), 8, '0');
+			var _ = data.charCodeAt(i);
 			_bytes_.push(_);
 		}
 		return _bytes_;
@@ -122,13 +122,13 @@ class Stegosaurus {
 	
 	embed_data_in_img_data(img_data, data) {
 		var pixel_idx = 0, j=0;
-		data.push('00000000');
+		data.push(0);
 		var bit_queue = [];
 		
 		while (true) {
-			
-			while ( (bit_queue.length < (this.LSB_r + this.LSB_g + this.LSB_b)) && data.length != 0 ) {
-				bit_queue = bit_queue.concat( data.shift().split('') );
+		
+			while ( (bit_queue.length < (this.LSB.r + this.LSB.g + this.LSB.b)) && data.length != 0 ) {	
+				bit_queue = bit_queue.concat( Stegosaurus.string_ljust(data.shift().toString(2), 8, '0').split('') );
 			}
 			
 			if (pixel_idx < img_data.data.length) {
