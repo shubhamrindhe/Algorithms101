@@ -4,7 +4,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 	<meta name="author" content="shubhamrindhe" id="author"/>
-	<title>Ghostegg - Steganography Tool</title>
+	<title>ghostegg</title>
 	<style>
 		body{
 			padding:0;
@@ -26,6 +26,42 @@
 			letter-spacing:4px;
 		}
 		
+		#logo:hover > #_steg_ {
+			text-decoration:underline;
+		}
+		
+		/*
+		#logo:hover > #_g_:before {
+			content:'ano';
+			font-size:10px;
+		}
+		
+		#logo:hover > #_g_:after {
+			content:'raphy';
+			font-size:10px;
+		}
+		*/
+		
+		input[type="checkbox"]:not(:checked) + label > #_g_:before,
+		input[type="checkbox"]:not(:checked) + label > #_g_:after {
+			content:'';
+			display : none;
+		}
+		
+		input[type="checkbox"]:checked + label > #_g_:before {
+			content:'ano';
+			font-size:10px;
+			display : inline-block;
+		}
+		
+		input[type="checkbox"]:checked + label > #_g_:after {
+			content:'raphy';
+			font-size:10px;
+			display : inline-block;
+		}
+		
+		
+		
 		input[type="checkbox"]{
 			transition-duration:0.1s;
 		}
@@ -33,7 +69,13 @@
 		label {
 			/*text-decoration:underline;*/
 		}
-
+		
+		
+		.hidden {
+			display:none;
+		}
+		
+		/*
 		input[type="checkbox"]:not(:checked) + label > span.hidden {
 			display : none;
 		}
@@ -41,6 +83,7 @@
 		input[type="checkbox"]:checked + label > span.hidden {
 			display : inline-block;
 		}
+		*/
 		
 		input[type="checkbox"]:not(:checked) + label > span.fade {
 			opacity: 1;
@@ -61,7 +104,7 @@
 		}
 		
 		.hidden, .fade {
-			transition-duration:0.2s;
+			transition-duration:0.4s;
 		}
 		
 		#information{
@@ -91,6 +134,40 @@
 				float : right;
 			}
 		}
+		
+		
+		
+		
+		input.steg_file:invalid ~ input.steg_file:invalid{
+			display:none;
+		}
+		
+		input.steg_file[type=file][value=""] + label {
+			background-color: red;
+			color: blue;
+			border-style: dashed;
+		}
+		
+		/*
+		input:not([value]), div:not([value]) {
+		   background-color: #F88;
+		}
+
+		input[value], div[value] {
+		   border: 5px solid #8F8;
+		}
+		
+		input[value=""], div[value=""] {
+		   border: 5px solid #F8F;
+		}
+
+		input:not([value=""]), div:not([value=""]) {
+		   color: blue;
+		   border-style: dashed;
+		}
+		*/
+		
+		
 	</style>
 	<script src="./xor_cipher.js"></script>
 	<script src="./ghostegano.js"></script>
@@ -224,12 +301,16 @@
 		<div id='information'>
 			<div>
 				<input type="checkbox" id="egg-status"/>
-				<label id="logo"><span class="fade">gho</span><span style="text-decoration:underline">steg</span><span class="hidden">ano</span>g<span class="hidden">raphy</span></label>
+				<label id="logo">
+					<span class="fade">gho</span><span id="_steg_">steg</span><span class="hidden">ano</span><span id="_g_">g</span><span class="hidden">raphy</span>
+				</label>
 			</div>
 			
 			<div>
-				<input type="file" id="txt_file"/>
-				<input type="file" id="img_file"/>
+				<input type="file" id="txt_file" class="steg_file"/>
+				<label for="txt_file">Select Text File</label>
+				<input type="file" id="img_file" class="steg_file"/><br>
+				<label for="img_file">Select Image File</label>
 			</div>
 			
 			<div>
