@@ -289,7 +289,9 @@
 			//console.log(selectedText);
 			
 			if (selectedText == "steg") {
-				document.getElementById('egg-status').checked = true;
+				setTimeout(function () {
+					document.getElementById('egg-status').checked = true;
+				},1011);
 			} else {
 				document.getElementById('egg-status').checked = false;
 			}

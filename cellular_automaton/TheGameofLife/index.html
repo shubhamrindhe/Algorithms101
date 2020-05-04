@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+	<meta name="author" content="shubhamrindhe" id="author"/>
+	<title>The Game of Life</title>
+	<style type="text/css">
+	body{
+		margin:0;
+		padding:0;
+		font-family:Courier New;
+		background:none;
+		/*overflow:hidden;*/
+		min-height:100%;
+	}
+
+	body.darkmode{
+		background:#000;
+	}
+	body.darkmode *{
+		color:#fff;
+	}
+		
+	.centroid{
+		position:absolute;
+		top:50%;
+		left:50%;
+		transform:translate(-50%,-50%);
+	}
+	#grid{
+		font-size:xx-small;
+		font-family:Courier New;
+		/*border:2px solid red;*/
+	}
+	
+	.loader{
+		position:absolute ;
+		left:50%;
+		bottom:10%;
+	}
+	.loader:before{
+		content:'';
+		position:absolute ;
+		width:25px;
+		height:25px;
+		
+		border-radius:50%;
+		border: 2px solid rgba(255,255,255,0);
+		border-top-color:black;
+		border-bottom-color:black;
+		
+		animation : RotateAClk 1s infinite linear;
+	}
+	.loader:after{
+		content:'';
+		position:absolute ;
+		width:15px;
+		height:15px;
+		
+		border-radius:50%;
+		border: 2px solid rgba(255,255,255,0);
+		border-top-color:black;
+		border-bottom-color:black;
+		
+		animation : RotateClk .5s infinite linear;
+	}
+	@keyframes RotateClk{
+		0%{
+			transform:translate(-50%,-50%) rotate(0deg);
+		}
+		100%{
+			transform:translate(-50%,-50%) rotate(360deg);
+		}
+	}
+	@keyframes RotateAClk{
+		0%{
+			transform:translate(-50%,-50%) rotate(0deg);
+		}
+		100%{
+			transform:translate(-50%,-50%) rotate(-360deg);
+		}
+		
+	}
+	body.darkmode .loader:before{
+		border-top-color:white;
+		border-bottom-color:white;
+	}
+	body.darkmode .loader:after{
+		border-top-color:white;
+		border-bottom-color:white;
+	}
+</style>
+</head>
+<body class="">
+	<code id="grid" style="white-space:pre;width:auto;height:auto;" class="centroid"></code>
+	<div id="loader" class="loader" style="display:block;"></div>
+</body>	
+<script type="text/javascript">
+	
+//(quine=()=>`quine=${quine}`)()
+var grid;
+var canvas,ctx;
+
+var jeev = '&#9650;';
+jeev = '&#x25a0;';
+
+var dim = innerWidth>innerHeight ? 50 : 20 ;
+	
+function arr2d(r,c,d=0){
+	var _ = [] 
+	for(var i=0;i<r;++i){
+		_[i] = [];
+		for(var j=0;j<c;++j){
+			_[i].push( (typeof d=='function'?d():d) );
+		}
+	}
+	return _;
+}
+
+
+function arr2str(arr){
+	var _ = "";
+	/*
+	for(var i=0;i<arr.length;++i){
+		_+= (i==0?'[[':' [')+arr[i].join(' ')+(i==arr.length-1?']]':'] \n');
+	}
+	*/
+	for(var i=0;i<arr.length;++i){
+		_+=(i==0?'let the_game_of_life = [\n   [':'   [');
+		for(var j=0;j<arr[i].length;++j){
+			_+= " "+(arr[i][j]==0?' ': jeev )+" ";
+		}
+		_+=(i==arr.length-1?']   \n];':'],   \n');
+	}
+	return _;
+}
+
+
+function loop(){
+	window.requestAnimationFrame(loop);
+	
+	var _ = evolve(grid);
+	grid = _.new_grid;
+	
+	document.getElementById('grid').innerHTML = arr2str(grid)+'\n';
+	
+	document.getElementById('grid').innerHTML += 'changes = '+_.counts.changes+'\n';
+	document.getElementById('grid').innerHTML += 'nochanges = '+_.counts.nochanges+'\n';
+	document.getElementById('grid').innerHTML += 'spawns = '+_.counts.spawn+'\n';
+	document.getElementById('grid').innerHTML += 'deaths = '+_.counts.death+'\n';
+	
+	/*
+	console.clear();
+	console.log('changes = '+_.counts.changes);
+	console.log('nochanges = '+_.counts.nochanges);
+	console.log('spawns = '+_.counts.spawn);
+	console.log('deaths = '+_.counts.death);
+	*/
+}
+
+function evolve(_){
+
+	new_grid = arr2d(dim,dim,0);
+	var r = _.length
+	var counts = {
+		spawn : 0,
+		death : 0,
+		changes : 0,
+		nochanges : 0
+	};
+	for(var i=0;i<r;++i){
+		var c = _[i].length
+		for(var j=0;j<c;++j){
+			var state = _[i][j];
+		
+			if(i==0||i==r-1||j==0||j==c-1){
+				new_grid[i][j] = _[i][j];
+				counts.nochanges += 1;
+			}else{
+		
+				var sigma = 0;
+				sigma += _[i-1][j-1];
+				sigma += _[i-1][j];
+				sigma += _[i-1][j+1];
+				
+				sigma += _[i][j-1];
+				//sigma += _[i1][j];
+				sigma += _[i][j+1];
+				
+				sigma += _[i+1][j-1];
+				sigma += _[i+1][j];
+				sigma += _[i+1][j+1];
+				
+				if(state==0 && sigma==3){
+					new_grid[i][j] = 1;
+					counts.spawn += 1;
+					counts.changes += 1;
+				}else if(state==1 && (sigma<2||sigma>3)){
+					new_grid[i][j] = 0;
+					counts.death += 1;
+					counts.changes += 1;
+				}else{
+					new_grid[i][j] = state;
+					counts.nochanges += 1;
+				}
+				
+			
+			}
+		}	
+	}
+	return {new_grid,counts};
+}
+
+
+onload = function(e){
+	grid = arr2d(dim,dim,function(){return Math.round(Math.random())});
+	document.getElementById('loader').onclick = function(e){document.body.classList.toggle('darkmode');}
+	loop();
+}
+</script>
+	
+</html>
