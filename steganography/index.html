@@ -279,18 +279,23 @@
 			fileReader[readAs](file);
 		}
 		
-		function egg (event) {
-			var selectedText = "";
+		function getSelectedText () {
 			if (typeof window.getSelection() != "undefined") {
-				selectedText = window.getSelection().toString();
+				return window.getSelection().toString();
 			} else if (typeof document.getSelection() != "undefined") {
-				selectedText = document.getSelection().toString();
+				return document.getSelection().toString();
+			} else {
+				return null;
 			}
-			//console.log(selectedText);
-			
+		}
+		
+		function egg (event) {
+			var selectedText = getSelectedText();
 			if (selectedText == "steg") {
 				setTimeout(function () {
-					document.getElementById('egg-status').checked = true;
+					if (getSelectedText() == "steg") {
+						document.getElementById('egg-status').checked = true;
+					}
 				},1011);
 			} else {
 				document.getElementById('egg-status').checked = false;
@@ -304,7 +309,7 @@
 			<div>
 				<input type="checkbox" id="egg-status"/>
 				<label id="logo">
-					<span class="fade">gho</span><span id="_steg_">steg</span><span class="hidden">ano</span><span id="_g_">g</span><span class="hidden">raphy</span>
+					<span class="fade">gho</span><span id="_steg_">steg</span><span id="_g_">g</span>
 				</label>
 			</div>
 			
