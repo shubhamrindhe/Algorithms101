@@ -295,6 +295,9 @@
 				setTimeout(function () {
 					if (getSelectedText() == "steg") {
 						document.getElementById('egg-status').checked = true;
+						setTimeout(function () {
+							document.getElementById('egg-status').checked = false;
+						},5000);
 					}
 				},1011);
 			} else {
