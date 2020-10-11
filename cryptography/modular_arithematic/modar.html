@@ -10,11 +10,13 @@
 </head>
 <body>
 <script type="module">
-	import {extended_euclidean, extended_euclidean_recursive} from './modar.js';
+	import {extended_euclidean, extended_euclidean_recursive, fast_exponentiation} from './modar.js';
 	const n1 = 5, n2 = 27;
 
-	console.log(extended_euclidean_recursive(n1,n2));	
-	console.log(extended_euclidean(n1,n2));	
+	console.log(extended_euclidean_recursive(n1, n2));	
+	console.log(extended_euclidean(n1, n2));
+	
+	console.log(fast_exponentiation(37, 1011, 5));
 </script>
 </body>
 </html>
