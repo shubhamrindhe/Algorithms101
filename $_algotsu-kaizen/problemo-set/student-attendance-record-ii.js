@@ -39,7 +39,6 @@ var checkRecord = function(n) {
 
     for (let i = 0; i < n; ++i) {
         invalid_A = invalid_A
-        + 
     }
 
     return totol_p - invalid_A - invalid_P
