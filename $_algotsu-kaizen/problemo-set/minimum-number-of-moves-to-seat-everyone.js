@@ -13,9 +13,6 @@ var minMovesToSeat = function (seats, students) {
     const sorted_seats = seats.sort((a, b) => { return a - b })
     const sorted_students = students.sort((a, b) => { return a - b })
 
-    console.log(sorted_students, students);
-    console.log(sorted_seats, seats);
-
     let move_count = 0
     for (let idx = 0; idx < sorted_seats.length; ++idx) move_count += Math.abs(sorted_seats[idx] - sorted_students[idx])
 
