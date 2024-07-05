@@ -18,15 +18,15 @@ var intersect = function (nums1, nums2) {
 
     const maxLength = Math.max(nums1.length, nums2.length)
     for (let idx = 0; idx < maxLength; ++idx) {
-        let n1 = nums1[idx]
-        let n2 = nums2[idx]
+        const n1 = nums1[idx]
+        const n2 = nums2[idx]
         if (n1 !== undefined) add(n1, 0)
         if (n2 !== undefined) add(n2, 1)
     }
 
-    let output = []
+    const output = []
     for (const [key, values] of countMap.entries()) {
-        let i = Math.min(...values)
+        const i = Math.min(...values)
         while (i--) output.push(key)
     }
 

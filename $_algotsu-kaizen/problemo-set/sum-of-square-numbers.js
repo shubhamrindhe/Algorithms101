@@ -20,7 +20,6 @@ var judgeSquareSum = function (c) {
             return true
         }
     }
-
     return false
 };
 

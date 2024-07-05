@@ -10,7 +10,7 @@ function ListNode(val, next) {
 }
 
 const LikedListFromAray = (_) => {
-    return _.reverse().reduce((a, c) => { return new ListNode(c, a) })
+    return _.reverse().reduce((a, c) => { return new ListNode(c, a) }, undefined)
 }
 
 /**

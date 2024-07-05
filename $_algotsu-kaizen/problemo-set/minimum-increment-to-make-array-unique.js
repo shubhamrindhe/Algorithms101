@@ -1,7 +1,7 @@
 
 /**
  * 945. Minimum Increment to Make Array Unique
- * https://leetcode.com/problems/git /description/
+ * https://leetcode.com/problems/minimum-increment-to-make-array-unique/description/
  */
 
 /**
@@ -35,8 +35,6 @@ var minIncrementForUnique = function (nums) {
     }
 
     let max_frequency = frequencyMap.get(max) || 0
-    let max_plus_one_frequency = frequencyMap.get(max + 1) || 0
-
     let i = max_frequency > 1 ? max : max + 1
     let final_inc = 0
 
@@ -54,14 +52,6 @@ var minIncrementForUnique = function (nums) {
 
         ++i
     }
-
-
-    console.log(frequencyMap, max_frequency, max_plus_one_frequency, inc)
-
-   
-
-    // final_inc += max_frequency > 1 ? max_frequency - 1 : 0
-    // final_inc += max_plus_one_frequency > 1 ? max_plus_one_frequency - 1 : 0
 
     return inc + final_inc
 };
