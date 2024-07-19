@@ -59,20 +59,13 @@ var countPairs = function (root, distance) {
 
     const dfs = (node) => {
         if (!node.left && !node.right) return [1]
-
         let left_leaves_d = node?.left ? dfs(node.left) : []
         let right_leaves_d = node?.right ? dfs(node.right) : []
-
-        // for (let i = 0; i < left_d.length; ++i)
-        //     for (let j = 0; j < right_d.length; ++j)
         for (const left_leaf of left_leaves_d)
             for (const right_leaf of right_leaves_d)
                 if (left_leaf + right_leaf <= distance) ++count
-
-
         left_leaves_d.forEach((e, i, l) => { ++l[i] })
         right_leaves_d.forEach((e, i, l) => { ++l[i] })
-
         return [...left_leaves_d, ...right_leaves_d]
     }
 
