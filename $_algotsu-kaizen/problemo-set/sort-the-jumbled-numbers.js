@@ -1,23 +1,7 @@
 /**
- * 1636. Sort Array by Increasing Frequency
- * https://leetcode.com/problems/sort-array-by-increasing-frequency/description/
+ * 2191. Sort the Jumbled Numbers
+ * https://leetcode.com/problems/sort-the-jumbled-numbers/description
  */
-
-/**
- * @param {number[]} nums
- * @return {number[]}
- */
-var frequencySort = function (nums) {
-    const frequencyMap = new Map()
-    nums.forEach(n => frequencyMap.set(n, (frequencyMap.get(n) || 0) + 1))
-    // nums.reduce((map, n) => map.set(n, (map.get(n) || 0) + 1), new Map())
-    // const data = [...frequencyMap.entries()].sort(([n1, f1], [n2, f2]) => f1 == f2 ? n2 - n1 : f1 - f2)
-    // let output = new Array(nums.length), idx = 0
-    // for (let [n, f] of data) while(f--) output[idx++] = n
-    // return output
-
-    return nums.sort((a, b) => frequencyMap.get(a) - frequencyMap.get(b) || b - a)
-};
 
 /**
  * @param {number[]} mapping
