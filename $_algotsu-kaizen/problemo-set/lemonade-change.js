@@ -1,6 +1,6 @@
 /**
- * 40. Combination Sum II
- * https://leetcode.com/problems/combination-sum-ii/description/
+ * 860. Lemonade Change
+ * https://leetcode.com/problems/lemonade-change/description/
  */
 
 /**
