@@ -38,4 +38,3 @@ fn main() {
     println!("The {}th ugly number is: {}", 10, Solution::nth_ugly_number(10));
     println!("The {}th ugly number is: {}", 1, Solution::nth_ugly_number(1));
 }
-
