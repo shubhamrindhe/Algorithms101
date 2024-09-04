@@ -1,33 +1,33 @@
 
 class Solution {
-    
+
     func maxProbability(_ n: Int, _ edges: [[Int]], _ succProb: [Double], _ start_node: Int, _ end_node: Int) -> Double {
         var probs = [Double](repeating: 0x0, count: n)
         probs[start_node] = 1.0
-        
+
         for i in 0 ... n - 1  {
             var breakFlag = false
             for j in 0 ... edges.count - 1 {
                 let u = edges[j][0]
                 let v = edges[j][1]
                 let prob = succProb[j]
-                
+
                 if (probs[u] * prob > probs[v]) {
                     probs[v] = probs[u] * prob
                     breakFlag = true
                 }
-                
+
                 if (probs[v] * prob > probs[u]) {
                     probs[u] = probs[v] * prob
                     breakFlag = true
                 }
             }
-            
+
             if (!breakFlag) {
                 break
             }
         }
-        
+
         return probs[end_node]
     }
 }

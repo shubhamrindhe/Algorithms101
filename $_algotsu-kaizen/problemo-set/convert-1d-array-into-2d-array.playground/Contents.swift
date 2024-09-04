@@ -7,7 +7,7 @@ class Solution {
 
         var matrix = [[Int]]()
         var idx = 0
-    
+
         for r in 0 ..< m {
             var row = [Int](repeating: 0, count: n)
             for c in 0 ..< n {
