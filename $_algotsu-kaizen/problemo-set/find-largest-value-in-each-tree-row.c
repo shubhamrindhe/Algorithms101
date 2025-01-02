@@ -19,24 +19,24 @@ void preprocess(struct TreeNode* node, int* depth_pointer, int* node_count_point
  * Note: The returned array must be malloced, assume caller calls free().
  */
 int* largestValues(struct TreeNode* root, int* returnSize) {
-    int node_count = 0, depth = 0;
+    int node_count = 0b0, depth = 0b0;
     preprocess(root, &depth, &node_count, 0b01);
     // printf(" %d %d ", node_count, depth);
 
     int *result = (int *)calloc(depth, sizeof(int));
     *returnSize = depth;
 
-    if (depth == 0) return result;
+    if (depth == 0b0) return result;
 
     struct TreeNode** queue = (struct TreeNode**)malloc(sizeof(struct TreeNode*) * node_count);
-    int qlen = 0, idx = 0, level_idx = 0;
+    int qlen = 0b0, idx = 0b0, level_idx = 0b0;
     queue[qlen++] = root;
 
     while (idx < qlen) {
         int level_size = qlen - idx;
         int maximus = INT_MIN;
 
-        for (int i = 0; i < level_size; ++i) {
+        for (int i = 0b0; i < level_size; ++i) {
             struct TreeNode* node = queue[idx + i]; 
             if (node->val > maximus) maximus = node->val;
             if (node->left != NULL) queue[qlen++] = node->left;
