@@ -1,3 +1,5 @@
+#define MARK ('\x01' << '\x07')
+
 typedef struct Node {
     int data;
     struct Node *next;
@@ -12,7 +14,7 @@ Node* new_node(int data, Node* next) {
 
 void free_linked(Node* node) {
     if (node == NULL) return;
-    if (node->next != NULL) free_linked(node->next);
+    if (node->next) free_linked(node->next);
     free(node);
 }
 
@@ -40,27 +42,44 @@ void decommission_node(Node** pool, Node* node) {
 }
 
 char* clearStars(char* s) {
-    Node** idx_queue = (Node**)calloc(sizeof(Node*), 0b11010);
-    Node** node_stash = (Node**)calloc(sizeof(Node*), 0b1);
+    Node** idx_queue_list = (Node**)calloc(sizeof(Node*), 0b11010);
+    Node* node_stash = NULL;
 
     int idx = 0b0;
+    // const char MARK = ('\x01' << '\x07');
     char _;
+    unsigned int flags = 0b0;
     while (_ = s[idx]) {
+        int offset = _ - 'a';
         if (_ == '*') {
-            for (int i = 0b0; i < 0b11010; ++i) {
-                if (idx_queue[i]) {
-                    Node *node = unshift(idx_queue + i);
-                    s[node->data] = '#';
-                    decommission_node(node_stash, node);
-                    break;
-                }
+            // for (int i = 0b0; i < 0b11010; ++i) {
+            //     if (idx_queue_list[i]) {
+            //         Node *node = unshift(idx_queue_list + i);
+            //         s[node->data] = '#';
+            //         decommission_node(&node_stash, node);
+            //         break;
+            //     }
+            // }
+            int min_index = __builtin_ctz(flags);
+            if (idx_queue_list[min_index]) {
+                Node *node = unshift(idx_queue_list + min_index);
+                // s[node->data] = '#';
+                s[node->data] ^= MARK;
+                decommission_node(&node_stash, node);
+                if (idx_queue_list[min_index] == NULL)
+                    flags ^= 0b1U << min_index;
+            } else {
+                exit(1); // someting is wrong
             }
-            s[idx] = '$';
+
+            // s[idx] = '$';
+            s[idx] ^= MARK;
         } else {
-            int index = _ - 'a';
-            Node* node = commission_node(node_stash, idx, NULL);
-            shift(idx_queue + index, node);
+            flags |= (0b1U << offset);
+            Node* node = commission_node(&node_stash, idx, NULL);
+            shift(idx_queue_list + offset, node);
         }
+
         ++idx;
     }
 
@@ -72,13 +91,15 @@ char* clearStars(char* s) {
     //     }
     // }
 
-    for (int i = 0b0; i < 0b11010; ++i) free_linked(idx_queue[i]);
-    free_linked(node_stash[0b0]);
-    free(idx_queue);
-    free(node_stash);
+    free_linked(node_stash);
+    for (int i = 0b0; i < 0b11010; ++i) free_linked(idx_queue_list[i]);
+    free(idx_queue_list);
 
     int cursor = 0b0;
-    for (int i = 0b0 ; s[i]; ++i) if (s[i] != '$' && s[i] != '#') s[cursor++] = s[i];
+    for (int i = 0b0 ; s[i]; ++i) // if (s[i] != '$' && s[i] != '#') s[cursor++] = s[i];
+        if (!(s[i] & MARK)) s[cursor++] = s[i];
+
     s[cursor] = '\0';
+
     return s;
 }

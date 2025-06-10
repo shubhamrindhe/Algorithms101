@@ -23,7 +23,7 @@ char* answerString(char* word, int numFriends) {
         if (max_c == word[i]) idx_list[max_idx_len++] = i;
     }
 
-    // int idx = -1;
+    int offset = 0;
     for (int i = 0b0; i < max_idx_len; ++i) {
         int start_offset = idx_list[i];
         // int available_length = MIN(N, start_offset + max_substr_len);
@@ -33,11 +33,13 @@ char* answerString(char* word, int numFriends) {
         //     idx = i;
         //     continue;
         // }
-        if (strncmp(result, word + start_offset, max_substr_len) < 0b0)
-            strncpy(result, word + start_offset, max_substr_len);
+        if (strncmp(word + offset, word + start_offset, max_substr_len) < 0b0)
+            // strncpy(result, word + start_offset, max_substr_len);
+            offset = start_offset;
     }
 
     free(idx_list);
+    strncpy(result, word + offset, max_substr_len);
 
     return result;
 }
