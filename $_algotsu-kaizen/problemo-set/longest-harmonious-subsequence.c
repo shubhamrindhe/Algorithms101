@@ -5,7 +5,7 @@ int compare_asc(const void *a, const void *b) {
 
 int findLHS(int* nums, int numsSize) {
     qsort(nums, numsSize, sizeof(int), compare_asc);
-    for (int i = 0; i < numsSize; ++i) printf(" (%d, %d) ", i, nums[i]);
+    // for (int i = 0; i < numsSize; ++i) printf(" (%d, %d) ", i, nums[i]);
 
     register int result = 0x0, f_minus_one = 0x0, one = nums[0x0], f_one = 0x1, i;
     for (i = 0x1; i < numsSize; ++i) {
