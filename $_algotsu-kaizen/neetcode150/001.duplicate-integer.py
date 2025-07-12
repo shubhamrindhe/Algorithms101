@@ -1,4 +1,4 @@
-# https://neetcode.io/problems/duplicate-integer?list=neetcode150
+# 001. Contains Duplicate (https://neetcode.io/problems/duplicate-integer?list=neetcode150)
 
 class Solution:
     def hasDuplicate(self, nums: List[int]) -> bool:

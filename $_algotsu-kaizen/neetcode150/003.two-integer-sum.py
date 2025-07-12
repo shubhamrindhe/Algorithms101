@@ -1,4 +1,4 @@
-# [003] Two Sum (https://neetcode.io/problems/two-integer-sum?list=neetcode150)
+# 003. Two Sum (https://neetcode.io/problems/two-integer-sum?list=neetcode150)
 
 class Solution:
     def twoSum(self, nums: List[int], target: int) -> List[int]:

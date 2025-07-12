@@ -1,4 +1,4 @@
-# [004] Group Anagrams (https://neetcode.io/problems/anagram-groups?list=neetcode150)
+# 004. Group Anagrams (https://neetcode.io/problems/anagram-groups?list=neetcode150)
 
 from collections import Counter
 
