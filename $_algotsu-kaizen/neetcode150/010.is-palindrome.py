@@ -1,3 +1,5 @@
+# 010. Valid Palindrome (https://neetcode.io/problems/is-palindrome?list=neetcode150)
+
 class Solution:
     def isPalindrome(self, s: str) -> bool:
         l, r = 0, len(s) - 1

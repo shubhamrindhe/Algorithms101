@@ -1,3 +1,5 @@
+# 009. Longest Consecutive Sequence (https://neetcode.io/problems/longest-consecutive-sequence?list=neetcode150)
+
 class Solution:
     def longestConsecutive(self, nums: List[int]) -> int:
         if not nums:
