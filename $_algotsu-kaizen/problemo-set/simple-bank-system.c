@@ -43,15 +43,3 @@ void bankFree(Bank* bank) {
     free(bank->balanceList);
     free(bank);
 }
-
-/**
- * Your Bank struct will be instantiated and called as such:
- * Bank* obj = bankCreate(balance, balanceSize);
- * bool param_1 = bankTransfer(obj, account1, account2, money);
-
- * bool param_2 = bankDeposit(obj, account, money);
-
- * bool param_3 = bankWithdraw(obj, account, money);
-
- * bankFree(obj);
-*/
