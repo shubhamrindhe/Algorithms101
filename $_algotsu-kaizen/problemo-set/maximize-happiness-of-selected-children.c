@@ -4,7 +4,6 @@ int compare(const void *a, const void *b) {
     return B - A;
 }
 
-
 long long maximumHappinessSum(int* happiness, int happinessSize, int k) {
     qsort(happiness, happinessSize, sizeof(int), compare);
 
