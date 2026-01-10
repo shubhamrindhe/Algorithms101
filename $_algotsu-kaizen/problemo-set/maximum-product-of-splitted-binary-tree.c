@@ -1,4 +1,3 @@
-// #define MOD 1000000007
 const int MOD = 1000000007;
 
 long long dfs(struct TreeNode* node, long long *subtrees_list, int *list_length) {
